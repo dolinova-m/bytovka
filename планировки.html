@@ -1,0 +1,418 @@
+<!doctype html><meta charset="utf-8">
+<title>Бытовка у поля</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F3F5F1; --card:#FBFCFA; --ink:#1C241F; --ink2:#4B564E;
+  --rule:#CDD4C8; --wall:#2A332C; --zone:#E0E5DB; --fix:#EDF0EA;
+  --field:#4A7A52; --glass:#2F7183; --fire:#B96D22;
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+  --paper:#13170F; --card:#1A1F19; --ink:#E9EEE5; --ink2:#A3AE9E;
+  --rule:#2F382F; --wall:#D5DCD2; --zone:#232B23; --fix:#1F261F;
+  --field:#84B388; --glass:#6FB4C4; --fire:#E29C50;
+}}
+:root[data-theme="dark"]{
+  --paper:#13170F; --card:#1A1F19; --ink:#E9EEE5; --ink2:#A3AE9E;
+  --rule:#2F382F; --wall:#D5DCD2; --zone:#232B23; --fix:#1F261F;
+  --field:#84B388; --glass:#6FB4C4; --fire:#E29C50;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:Spectral,Georgia,serif;font-size:17px;line-height:1.6;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 20px 80px}
+h1{font-family:Oswald,Impact,sans-serif;font-weight:600;font-size:clamp(34px,6vw,54px);line-height:1.02;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--ink2);margin:10px 0 0;max-width:62ch}
+.eyebrow{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:12px;color:var(--field);margin:0 0 14px}
+.stamp{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));border:1.5px solid var(--ink);margin:30px 0 46px}
+.stamp div{padding:11px 13px;border-right:1px solid var(--rule)}
+.stamp div:last-child{border-right:none}
+.stamp dt{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;color:var(--ink2);margin:0 0 3px}
+.stamp dd{margin:0;font-family:'IBM Plex Mono',monospace;font-size:14.5px;font-variant-numeric:tabular-nums}
+h2{font-family:Oswald,sans-serif;font-weight:500;font-size:13px;text-transform:uppercase;letter-spacing:.17em;color:var(--ink2);margin:0 0 16px;padding-bottom:9px;border-bottom:1px solid var(--rule)}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:9px 26px;margin:0 0 54px;font-size:15px}
+.legend p{margin:0;display:flex;gap:10px;align-items:baseline}
+.legend i{flex:0 0 34px;height:11px;margin-top:6px;display:block}
+.variant{margin:0 0 66px}
+.vhead{display:flex;gap:16px;align-items:baseline;margin-bottom:4px}
+.vnum{font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.14em;color:var(--fire);padding-top:4px}
+.vname{font-family:Oswald,sans-serif;font-weight:500;font-size:clamp(22px,3.4vw,30px);margin:0;letter-spacing:.005em}
+.idea{margin:0 0 20px;color:var(--ink2);max-width:66ch;font-style:italic}
+.sheet{overflow-x:auto;background:var(--card);border:1px solid var(--rule);padding:14px}
+.sheet svg{display:block;min-width:740px;width:100%;height:auto}
+.pm{display:grid;grid-template-columns:1fr 1fr;gap:12px 34px;margin-top:20px}
+.pm ul{margin:0;padding-left:0;list-style:none;font-size:15.5px}
+.pm li{position:relative;padding-left:20px;margin-bottom:5px}
+.pm li::before{position:absolute;left:0;font-family:'IBM Plex Mono',monospace}
+.pm .good li::before{content:"+";color:var(--field)}
+.pm .bad li::before{content:"–";color:var(--fire)}
+.pm h3{font-family:Oswald,sans-serif;font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink2);margin:0 0 8px}
+.dec{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:0 36px;margin-bottom:54px}
+.dec div{padding:15px 0;border-top:1px solid var(--rule)}
+.dec b{font-family:Oswald,sans-serif;font-weight:500;font-size:15px;letter-spacing:.01em;display:block;margin-bottom:2px}
+.dec p{margin:0;font-size:15.5px;color:var(--ink2)}
+ol.q{counter-reset:q;list-style:none;padding:0;margin:0}
+ol.q li{counter-increment:q;position:relative;padding:12px 0 12px 42px;border-top:1px solid var(--rule)}
+ol.q li::before{content:counter(q);position:absolute;left:0;top:13px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--fire)}
+footer{margin-top:60px;padding-top:18px;border-top:1.5px solid var(--ink);font-size:14px;color:var(--ink2)}
+@media (max-width:620px){.pm,.dec{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+<p class="eyebrow">Планировки · 2,5 × 6,0 м · поле на западе</p>
+<h1>Бытовка у поля</h1>
+<p class="sub">Пять вариантов планировки одной и той же коробки. Во всех — кровать-подиум изножьем к закату, душ с поддоном, тамбур, печка с живым огнём и раздвижные внутренние двери. Два рабочих места всегда разнесены, у одного за спиной стена. Отличаются входом, местом мокрого блока и тем, как устроены рабочие зоны.</p>
+
+<dl class="stamp">
+  <div><dt>Внутри</dt><dd>2,50 × 6,00 м</dd></div>
+  <div><dt>Площадь</dt><dd>15,0 м²</dd></div>
+  <div><dt>Потолок</dt><dd>2,20 м</dd></div>
+  <div><dt>Вид на поле</dt><dd>запад, длинная стена</dd></div>
+  <div><dt>Основание</dt><dd>сваи</dd></div>
+  <div><dt>Масштаб</dt><dd>1 : 50</dd></div>
+</dl>
+
+<h2>Как читать чертёж</h2>
+<div class="legend" id="lg"></div>
+
+<div id="plans"></div>
+
+<h2>Что я решил за тебя</h2>
+<div class="dec">
+  <div><b>Два стула на всю бытовку</b><p>Больше просто негде хранить. Оба со спинкой и такой высоты, что уходят либо под столешницу, либо целиком под кровать-подиум: 90 см до низа подиума хватает обычному стулу. Третий гость садится на край подиума.</p></div>\n  <div><b>Ни одной распашной двери внутри</b><p>Все внутренние проёмы — купе в стену, гармошка или роллета сверху. Дверь санузла — плотная раздвижная с уплотнителем по периметру, тканевая там не годится из-за пара. Наружу открывается только входная: на крыльце места не жалко.</p></div>
+  <div><b>Стол ставим так, чтобы за спиной была стена</b><p>В бытовке шириной 2,5 м это получается, только если стол стоит перед человеком, а не у него. Поэтому в вариантах 01 и 03 стол отодвинут от восточной стены на 70 см: сидишь спиной к стене, а поверх стола видно окно и поле.</p></div>
+  <div><b>Кровать 2,0 × 1,6, а не 1,8</b><p>При росте 181 см 1,8 м — упираешься. Поперёк бытовки 2,0 м встаёт ровно: 2,00 м кровать + 0,45 м стеллаж за изголовьем + зазор.</p></div>
+  <div><b>Подиум 90 см</b><p>Матрас ляжет на 1,08 м, до потолка остаётся 1,12 м — сидеть можно свободно. Под кроватью 3,2 м² хранения: ящики, насос, место под стиралку на будущее.</p></div>
+  <div><b>Бойлер 50 л вместо 40</b><p>40 л — это ровно один душ. 50 л (Ø45 см) даёт два коротких, вешается высоко над унитазом, крепить к каркасу, а не к обшивке.</p></div>
+  <div><b>Печка 3–5 кВт, не больше</b><p>Обычная дровяная со стеклом даёт 6–9 кВт — в 15 м² это сауна с открытым окном в январе. Плюс отдельный приточный клапан у печки, иначе герметичная бытовка её задымит.</p></div>
+  <div><b>Лист металла под печку</b><p>Нержавейка или оцинковка по 10 мм ГВЛ: выступ 30 см перед дверцей, 10 см по бокам. На стену за печкой — экран с зазором 30–50 мм.</p></div>
+  <div><b>Дрова — снаружи</b><p>Внутри на 15 м² ящик для дров не выигрывает у хранения. Дрова под крыльцом, внутри металлическая корзина на 2–3 закладки.</p></div>
+  <div><b>Столешница на 75 см</b><p>Подоконник-столешница = высота обычного стола, значит обычные стулья со спинками, как ты хотела, а не барные табуреты. Остекление тогда от 75 см до 2,0 м — почти во всю стену.</p></div>
+  <div><b>Санузел всегда у восточной стены</b><p>Чтобы стояк 110 мм и труба от бака шли коротко и с одной стороны. Септик и вкопанный бак — тоже с востока, подальше от поля и будущей террасы.</p></div>
+  <div><b>Фрамуга максимум 1,2 × 0,8 м</b><p>Створка с двухкамерным стеклопакетом такого размера весит ~35 кг — два газовых упора её держат. Полотно на всю стену 2,5 м руками не поднять.</p></div>
+  <div><b>Запад = закаты и перегрев</b><p>Да, закаты твои. Но низкое западное солнце вынос крыши не ловит: нужны наружная рулонная шторка или маркиза и солнцезащитный стеклопакет, иначе вечером в июле там +40.</p></div>
+</div>
+
+<h2>Чего ещё не хватает, чтобы выбрать</h2>
+<ol class="q">
+  <li>С какой стороны вы к бытовке подходите — от дома, от дороги, от калитки? Это главный аргумент за вариант 01, 02 или 03.</li>
+  <li>Где будут септик и вкопанный бак относительно коробки — север, юг, восток? Я поставил санузел на восток, но под вашу реальность можно зеркалить.</li>
+  <li>Рукомойник: мойка одна на кухне. Руки после туалета — идти на кухню, или всё-таки крошечный рукомойник 30 см над унитазом?
+  </li>
+  <li>Высота пола над землёй (длина свай) — сколько ступеней на крыльце и влезает ли под крыльцо ящик для дров.</li>
+  <li>Терраса: вдоль всей западной стены или только у входа? В варианте 02 вход сразу на неё, в 01 и 03 — через угол.</li>
+  <li>Стиральная машина когда-нибудь будет? Я держу под неё место под кроватью, но тогда туда надо заранее завести воду и слив.</li>
+</ol>
+
+<footer>Планировки нарисованы по чистым внутренним размерам 2,5 × 6,0 м. Мебель — в масштабе, так что всё, что нарисовано, физически влезает. Инженерку (бак, насос, септик, вентиляцию) распишу отдельной схемой, когда выберем вариант.</footer>
+</div>
+
+<script>
+var VAR = [
+{
+ n:'01', name:'Кабинет у стены санузла', idea:'Вход в северный торец, мокрый блок там же. Стена санузла продолжена перегородкой и образует альков у восточной стены: там первое рабочее место — сидишь спиной к стене, стол перед тобой, поверх него видно окно и поле. Второе рабочее место и обед — за столешницей-подоконником, через проход.',
+ terr:[200,5800],
+ zones:[[0,0,960,1360,'тамбур'],[0,1440,1460,1060,'санузел']],
+ parts:[[960,0,80,1360],[0,1360,1540,80],[1460,1440,80,1060],[2560,1250,80,1250]],
+ plate:[[1040,250,860,900]],
+ items:[
+  [60,1700,800,800,'душ|80×80','fix'],
+  [900,1850,350,650,'WC','fix'],
+  [900,1460,450,330,'бойлер','dash'],
+  [1060,300,440,450,'печка','fire'],
+  [1620,1320,880,500,'рабочее|место 1','fix'],
+  [2740,1900,1610,600,'кухня','fix',-190],
+  [3800,1950,460,500,'х-к','dash'],
+  [1950,0,2350,500,'','fix'],
+  [4400,0,1600,2000,'кровать 2,0 × 1,6|подиум 90 см · хранение','bed'],
+  [4400,2050,1600,450,'стеллаж 45 см + штанга','fix'],
+  [5820,200,180,800,'кондиционер','dash']],
+ sink:[[2900,2190]], burn:[[3300,2300],[3440,2300]],
+ chairs:[[2060,2100],[3700,820]],
+ pillow:[[4500,1750,1400,230]],
+ texts:[[480,760,'тамбур'],[420,1600,'санузел'],[2475,300,'обед'],[3700,300,'рабочее место 2']],
+ doors:[[-120,350,120,800,'a',-1]],
+ slides:[[960,450,80,700,-1],[1460,1600,80,700,1]],
+ wins:[['W',2050,2950,'f'],['W',3100,4300,'g'],['W',4500,5900,'g'],['E',2650,3150,'g'],['N',1800,2300,'m']],
+ dims:[['h',0,1540,2860,'1,54'],['h',1540,2640,2860,'1,10'],['h',2740,4350,2860,'1,61'],['h',4400,6000,2860,'1,60'],['h',0,6000,3120,'6,00'],['v',0,2500,-280,'2,50'],['v',500,1900,3300,'1,40']],
+ plus:['Рабочее место 1 в алькове: спина к стене, сбоку стена санузла, с другой — перегородка','Рабочие места разнесены на разные стороны бытовки и разделены проходом','Максимум стекла на запад: поле видно от обеда, со второго стола и с кровати','Вся инженерка в одном торце — самая дешёвая коробка'],
+ bad:['Кухня ужалась до 1,6 м — альков забрал часть восточной стены','Спальня больше ничем не отгорожена: если захочется, добавим роллету у кровати','Вход в торце: на будущую террасу выходишь через угол']
+},
+{
+ n:'02', name:'Две комнаты через тамбур', idea:'Вход с запада прямо на будущую террасу, в тамбур во всю ширину. Из него направо — кухня-столовая, налево — спальня с рабочим местом. Все внутренние двери раздвижные. Стол второго рабочего места развёрнут к стене тамбура: сидишь спиной к борту кровати, окно слева.',
+ terr:[1000,5700,3700],
+ zones:[[1840,0,1420,1160,'тамбур · прихожая'],[1840,1240,1420,1260,'санузел']],
+ parts:[[1760,0,80,2500],[3260,0,80,2500],[1840,1160,1420,80]],
+ plate:[[3340,1900,960,600]],
+ items:[
+  [1860,1700,800,800,'душ|80×80','fix'],
+  [2760,1850,350,650,'WC','fix'],
+  [2700,1290,450,330,'бойлер','dash'],
+  [0,1900,1760,600,'кухня','fix',-190],
+  [1250,1950,460,500,'х-к','dash'],
+  [100,0,1660,500,'обед + рабочее место 1','fix'],
+  [3400,1950,500,500,'печка','fire'],
+  [3400,0,560,1100,'рабочее место 2','fix'],
+  [4400,0,1600,2000,'кровать 2,0 × 1,6|подиум 90 см · хранение','bed'],
+  [4400,2050,1600,450,'стеллаж 45 см + штанга','fix'],
+  [0,600,180,800,'кондиционер','dash']],
+ sink:[[250,2190]], burn:[[760,2300],[900,2300]],
+ chairs:[[560,820],[4150,550]],
+ pillow:[[4500,1750,1400,230]],
+ texts:[[2550,560,'тамбур · прихожая'],[2250,1480,'санузел']],
+ doors:[[2250,-120,800,120,'a',-1]],
+ slides:[[1760,350,80,700,1],[3260,350,80,700,1],[3260,1300,80,700,1]],
+ wins:[['W',300,1500,'f'],['W',3350,4350,'g'],['W',4500,5900,'g'],['E',150,650,'g'],['E',2000,2500,'m']],
+ dims:[['h',0,1760,2860,'1,76'],['h',1840,3260,2860,'1,42'],['h',3340,6000,2860,'2,66'],['h',0,6000,3120,'6,00'],['v',0,2500,-280,'2,50'],['v',500,1900,900,'1,40']],
+ plus:['Настоящее личное пространство: две комнаты с раздвижными дверями','У рабочего места 2 за спиной борт кровати-подиума высотой 90 см, окно слева','Вход сразу на террасу — летом дверь открыта, и ты на ней','Печка видна и с кровати, и от второго стола'],
+ bad:['Тамбур с санузлом в центре съедают 1,5 м из шести','Одна печка на две изолированные зоны: северная половина холоднее, её греет кондиционер','Обедать можно только в северной комнате']
+},
+{
+ n:'03', name:'Печка в углу, работа врозь', idea:'Кухня развёрнута поперёк северного торца, печка — вплотную в северо-восточный угол. Первое рабочее место стоит у восточной стены спиной к ней, лицом через всю бытовку в большое окно. Второе — у западного окна за мокрым блоком, в другом конце. Между ними обед и тамбур.',
+ terr:[200,5800],
+ zones:[[2240,1640,760,860,'тамбур'],[3080,1340,1200,1160,'санузел']],
+ parts:[[2160,1560,80,940],[2160,1560,920,80],[3000,1260,80,1240],[3000,1260,1360,80],[4280,1340,80,1160]],
+ plate:[[50,2000,950,500]],
+ items:[
+  [0,0,600,1750,'','fix'],
+  [100,1100,460,480,'х-к','dash'],
+  [100,2050,500,450,'печка','fire'],
+  [1250,1300,950,500,'рабочее|место 1','fix'],
+  [2250,0,1000,500,'','fix'],
+  [3350,0,950,500,'','fix'],
+  [3120,1700,800,800,'душ|80×80','fix'],
+  [3930,1850,350,650,'WC','fix'],
+  [3840,1390,440,330,'бойлер','dash'],
+  [4400,0,1600,2000,'кровать 2,0 × 1,6|подиум 90 см · хранение','bed'],
+  [4400,2050,1600,450,'стеллаж 45 см + штанга','fix'],
+  [5820,200,180,800,'кондиционер','dash']],
+ sink:[[300,480]], burn:[[300,830],[300,970]],
+ chairs:[[1725,2100],[3800,820]],
+ pillow:[[4500,1750,1400,230]],
+ texts:[[2620,2120,'тамбур'],[3480,1540,'санузел'],[300,200,'кухня'],[2750,300,'обед'],[3825,300,'рабочее место 2']],
+ doors:[[2300,2500,700,120,'a',1]],
+ slides:[[2300,1560,700,80,-1],[3300,1260,700,80,1]],
+ wins:[['W',0,600,'g'],['W',700,2200,'g'],['W',2300,3200,'f'],['W',3350,4300,'g'],['W',4500,5900,'g'],['N',285,675,'g'],['E',3200,3700,'m']],
+ dims:[['h',0,600,2860,'0,60'],['h',600,2240,2860,'1,64'],['h',2240,4360,2860,'2,12'],['h',4400,6000,2860,'1,60'],['h',0,6000,3120,'6,00'],['v',0,2500,-280,'2,50'],['v',500,1300,1725,'0,80']],
+ plus:['Печка вплотную в угол — освобождает всю стену и греет от самого входа','Рабочее место 1 спиной к восточной стене, лицом через всю бытовку в полуторометровое окно','Два рабочих места в разных концах, между ними обед и мокрый блок','Окно над мойкой: моешь посуду — смотришь на поле'],
+ bad:['Кухня 1,75 м вместо 2,5: угол отдан печке','Мимо сидящего за рабочим местом 2 не пройти — остаётся 0,76 м','С кровати огонь в углу уже не виден, его загораживает рабочее место 1']
+},
+{
+ n:'04', name:'Кухня у санузла', idea:'Переделка первого варианта под твои правки: в санузел входишь из тамбура, кухня придвинута вплотную к стене санузла — мойка и унитаз на одном стояке. Печка переехала к западной стене перед спальней, рабочее место 2 заняло её нишу у входа. Кровать развёрнута: стеллаж к полю, окно — на восточную стену. Стульев два, оба задвигаются под столешницу или под кровать.',
+ terr:[200,5800],
+ zones:[[0,0,800,1300,'тамбур'],[0,1380,1460,1120,'санузел']],
+ parts:[[800,0,80,1300],[0,1300,1540,80],[1460,1380,80,1120],[2800,1400,80,1100]],
+ plate:[[3600,70,800,550]],
+ items:[
+  [40,1700,800,800,'душ|80×80','fix'],
+  [850,1430,610,350,'WC','fix'],
+  [900,1850,450,340,'бойлер','dash'],
+  [900,0,600,550,'рабочее|место 2','fix'],
+  [1540,0,1760,600,'кухня','fix',150],
+  [1560,80,460,500,'х-к','dash'],
+  [1620,1450,1100,500,'рабочее место 1','fix'],
+  [2900,750,700,650,'откидной|стол','dash'],
+  [3650,120,450,450,'печка','fire'],
+  [4400,0,1600,450,'стеллаж 45 см + штанга','fix'],
+  [4400,500,1600,2000,'кровать 2,0 × 1,6|подиум 90 см · хранение','bed'],
+  [5820,1400,180,900,'кондиционер','dash']],
+ sink:[[2300,300]], burn:[[2700,300],[2840,300]],
+ chairs:[[1200,850],[2170,2200]],
+ pillow:[[4500,530,1400,230]],
+ texts:[[400,650,'тамбур'],[500,1560,'санузел']],
+ doors:[[-120,250,120,800,'a',-1]],
+ slides:[[100,1300,600,80,-1]],
+ wins:[['W',900,1450,'g'],['W',1700,2550,'f'],['W',2650,3250,'g'],['E',4500,5900,'g'],['E',150,650,'m']],
+ dims:[['h',0,1540,2860,'1,54'],['h',1540,3300,2860,'1,76'],['h',3600,4400,2860,'0,80'],['h',4400,6000,2860,'1,60'],['h',0,6000,3120,'6,00'],['v',0,2500,-280,'2,50'],['v',600,1400,2000,'0,80']],
+ plus:['Мойка и унитаз через стену — один стояк и самая короткая канализация из четырёх вариантов','Санузел открывается из тамбура: из комнаты не видно ни двери, ни того, кто туда идёт','Кухня под окном — готовишь и моешь посуду, глядя на поле','Рабочие места в противоположных концах, у обоих за спиной стена'],
+ bad:['С кровати поля больше не видно: ты развернула её окном на восток, поле осталось за стеллажом','Отдельного обеденного места нет — едим за откидным столом у перегородки алькова','Между печкой и подиумом кровати 30 см: нужен экран из нержавейки с зазором 50 мм','Кухня 1,76 м почти без свободной столешницы — холодильник занял её начало у стены санузла']
+},
+{
+ n:'05', name:'Две комнаты, двери у кухни', idea:'Переделка второго варианта. Тамбур и санузел поменялись местами: тамбур теперь у восточной стены, а двери в обе комнаты — рядом с кухней, так что от входа комнаты не простреливаются и вся западная стена остаётся под окна. В санузел входишь только из тамбура. Рабочее место 2 — откидная столешница вдоль окна: подняла — работаешь, опустила — висит вдоль стены.',
+ terr:[1000,5700,3700],
+ zones:[[1840,0,1420,1200,'санузел'],[1840,1280,1420,1220,'тамбур']],
+ parts:[[1760,0,80,2500],[3260,0,80,2500],[1840,1200,1420,80]],
+ plate:[[3700,1950,700,550]],
+ items:[
+  [1880,350,800,800,'душ|80×80','fix'],
+  [2800,0,350,650,'WC','fix'],
+  [2780,700,450,330,'бойлер','dash'],
+  [0,1900,1760,600,'кухня','fix',-190],
+  [1250,1950,460,500,'х-к','dash'],
+  [100,0,1660,500,'обед + рабочее место 1','fix'],
+  [3750,2000,450,450,'печка','fire'],
+  [3400,0,950,500,'откидной стол|рабочее место 2','dash'],
+  [4400,0,1600,2000,'кровать 2,0 × 1,6|подиум 90 см · хранение','bed'],
+  [4400,2050,1600,450,'стеллаж 45 см + штанга','fix'],
+  [0,600,180,800,'кондиционер','dash']],
+ sink:[[250,2190]], burn:[[760,2300],[900,2300]],
+ chairs:[[900,850],[3870,870]],
+ pillow:[[4500,1750,1400,230]],
+ texts:[[2500,1700,'тамбур'],[2250,250,'санузел']],
+ doors:[[2300,2500,750,120,'a',1]],
+ slides:[[1760,1250,80,700,-1],[3260,1250,80,700,1],[2650,1200,600,80,-1]],
+ wins:[['W',300,1500,'f'],['W',1900,2400,'m'],['W',3400,4350,'g'],['W',4500,5900,'g'],['E',150,650,'g']],
+ dims:[['h',0,1760,2860,'1,76'],['h',1840,3260,2860,'1,42'],['h',3340,6000,2860,'2,66'],['h',0,6000,3120,'6,00'],['v',0,2500,-280,'2,50'],['v',500,1900,1500,'1,40']],
+ plus:['Двери в обе комнаты рядом с кухней: вся западная стена остаётся под окна и столы','В санузел входишь только из тамбура — из комнат двери не видно','Откидная столешница у окна: опустил — и в южной комнате пусто','С кровати по-прежнему видно поле'],
+ bad:['Санузел занял 1,4 м западной стены — там матовое стекло вместо вида на поле','Крыльцо теперь с востока: на террасу идёшь вокруг, пока не сделаете в южную комнату отдельную дверь','Тамбур с санузлом в центре по-прежнему съедают 1,5 м из шести','Печку пришлось сдвинуть к кровати, чтобы не открывать дверь прямо на неё']
+}];
+
+var W=120, P=80;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rect(x,y,w,h,c,extra){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" class="'+c+'"'+(extra||'')+'/>'}
+function txt(x,y,s,c,rot){return '<text x="'+x+'" y="'+y+'" class="'+c+'"'+(rot?' transform="rotate(-90 '+x+' '+y+')"':'')+'>'+esc(s)+'</text>'}
+function off2(i,n){return (i-(n-1)/2)*145}
+function label(x,y,w,h,s,cls,off){
+  var lines=s.split('|'), rot = (w < h*0.55), o='';
+  var n=lines.length, cx=x+w/2, cy=y+h/2+(off||0), lh=145;
+  for(var i=0;i<n;i++){
+
+    o += rot ? txt(cx+off2(i,n), cy, lines[i], cls, true) : txt(cx, cy+(i-(n-1)/2)*lh+42, lines[i], cls);
+  }
+  return o;
+}
+function slide(d){
+  var x=d[0],y=d[1],w=d[2],h=d[3],dir=d[4], o=rect(x,y,w,h,'op');
+  if(w>h){ var L=w*0.4, px=(dir>0? x+w-L : x);
+    o+=rect(px,y+h/2-30,L,60,'sld');
+    o+='<line x1="'+(x+w/2-dir*220)+'" y1="'+(y+h/2)+'" x2="'+(x+w/2+dir*300)+'" y2="'+(y+h/2)+'" class="sa"/>';
+  } else { var L2=h*0.4, py=(dir>0? y+h-L2 : y);
+    o+=rect(x+w/2-30,py,60,L2,'sld');
+    o+='<line x1="'+(x+w/2)+'" y1="'+(y+h/2-dir*220)+'" x2="'+(x+w/2)+'" y2="'+(y+h/2+dir*300)+'" class="sa"/>';
+  }
+  return o;
+}
+function door(d){
+  var x=d[0],y=d[1],w=d[2],h=d[3],hg=d[4],sw=d[5], o=rect(x,y,w,h,'op');
+  if(w>h){ var hx = (hg==='a'? x : x+w), yc=y+h/2, ex=(hg==='a'? x+w : x);
+    o+='<line x1="'+hx+'" y1="'+yc+'" x2="'+hx+'" y2="'+(yc+sw*w)+'" class="leaf"/>';
+    o+='<path d="M '+ex+' '+yc+' A '+w+' '+w+' 0 0 '+((hg==='a')===(sw>0)?1:0)+' '+hx+' '+(yc+sw*w)+'" class="arc"/>';
+  } else { var hy=(hg==='a'? y : y+h), xc=x+w/2, ey=(hg==='a'? y+h : y);
+    o+='<line x1="'+xc+'" y1="'+hy+'" x2="'+(xc+sw*h*0+sw*(h>0?0:0)+sw*0)+'" y2="'+hy+'" class="leaf"/>';
+    var L=d[3]>d[2]? d[3]:d[2];
+    o='<g>'+rect(x,y,w,h,'op');
+    var len=h;
+    o+='<line x1="'+xc+'" y1="'+hy+'" x2="'+(xc+sw*len)+'" y2="'+hy+'" class="leaf"/>';
+    o+='<path d="M '+xc+' '+ey+' A '+len+' '+len+' 0 0 '+((hg==='a')===(sw>0)?0:1)+' '+(xc+sw*len)+' '+hy+'" class="arc"/></g>';
+  }
+  return o;
+}
+function win(v){
+  var s=v[0],a=v[1],b=v[2],k=v[3], c='win '+k;
+  if(s==='W') return rect(a,-W,b-a,W,c);
+  if(s==='E') return rect(a,2500,b-a,W,c);
+  if(s==='N') return rect(-W,a,W,b-a,c);
+  return rect(6000,a,W,b-a,c);
+}
+function dim(d){
+  var o='';
+  if(d[0]==='h'){ var y=d[3];
+    o+='<line x1="'+d[1]+'" y1="'+y+'" x2="'+d[2]+'" y2="'+y+'" class="dl"/>';
+    o+='<line x1="'+d[1]+'" y1="'+(y-60)+'" x2="'+d[1]+'" y2="'+(y+60)+'" class="dl"/>';
+    o+='<line x1="'+d[2]+'" y1="'+(y-60)+'" x2="'+d[2]+'" y2="'+(y+60)+'" class="dl"/>';
+    o+=txt((d[1]+d[2])/2, y-50, d[4], 'dim');
+  } else { var x=d[3];
+    o+='<line x1="'+x+'" y1="'+d[1]+'" x2="'+x+'" y2="'+d[2]+'" class="dl"/>';
+    o+='<line x1="'+(x-60)+'" y1="'+d[1]+'" x2="'+(x+60)+'" y2="'+d[1]+'" class="dl"/>';
+    o+='<line x1="'+(x-60)+'" y1="'+d[2]+'" x2="'+(x+60)+'" y2="'+d[2]+'" class="dl"/>';
+    o+='<text x="'+x+'" y="'+((d[1]+d[2])/2)+'" class="dim" transform="rotate(-90 '+x+' '+((d[1]+d[2])/2)+')">'+d[4]+'</text>';
+  }
+  return o;
+}
+function draw(p){
+  var o='<svg viewBox="-860 -1220 7600 4700" role="img" aria-label="План бытовки 2,5 на 6 метров, вариант: '+esc(p.name)+'">';
+  o+='<defs><marker id="ar'+p.n+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arh"/></marker></defs>';
+  // поле
+  o+='<line x1="-180" y1="-980" x2="6180" y2="-980" class="fl"/>';
+  o+=txt(3000,-1010,'ПОЛЕ · ЗАКАТ','field');
+  [900,5100].forEach(function(x){o+='<line x1="'+x+'" y1="-300" x2="'+x+'" y2="-900" class="fa" marker-end="url(#ar'+p.n+')"/>'});
+  // терраса
+  if(p.terr){ o+=rect(p.terr[0],-860,p.terr[1]-p.terr[0],740,'terr'); o+=txt(p.terr[2]||(p.terr[0]+p.terr[1])/2,-560,'терраса (в перспективе, на тех же сваях)','tl'); }
+  // стены
+  o+=rect(-W,-W,6000+2*W,W,'wall')+rect(-W,2500,6000+2*W,W,'wall')+rect(-W,0,W,2500,'wall')+rect(6000,0,W,2500,'wall');
+  (p.zones||[]).forEach(function(z){o+=rect(z[0],z[1],z[2],z[3],'zone')});
+  (p.parts||[]).forEach(function(z){o+=rect(z[0],z[1],z[2],z[3],'wall')});
+  (p.plate||[]).forEach(function(z){o+=rect(z[0],z[1],z[2],z[3],'plate')});
+  (p.wins||[]).forEach(function(v){o+=win(v)});
+  (p.doors||[]).forEach(function(d){o+=door(d)});
+  (p.slides||[]).forEach(function(d){o+=slide(d)});
+  (p.items||[]).forEach(function(it){
+    o+=rect(it[0],it[1],it[2],it[3],it[5]);
+  });
+  (p.pillow||[]).forEach(function(z){o+=rect(z[0],z[1],z[2],z[3],'pil',' rx="40"')});
+  (p.sink||[]).forEach(function(c){o+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="195" class="mark"/>'});
+  (p.burn||[]).forEach(function(c){o+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="105" class="mark"/>'});
+  (p.chairs||[]).forEach(function(c){
+    o+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="200" class="chair"/>';
+    o+='<path d="M '+(c[0]-200)+' '+(c[1]+90)+' A 220 220 0 0 0 '+(c[0]+200)+' '+(c[1]+90)+'" class="chairback"/>';
+  });
+  (p.items||[]).forEach(function(it){
+    if(it[4]) o+=label(it[0],it[1],it[2],it[3],it[4], it[5]==='fire'?'lblf':(it[5]==='dash'?'lbls':'lbl'));
+  });
+  if(p.split){ o+='<line x1="'+p.split[0]+'" y1="0" x2="'+p.split[0]+'" y2="500" class="thin"/><line x1="'+p.split[1]+'" y1="0" x2="'+p.split[1]+'" y2="500" class="thin"/>'; }
+  if(p.curtain){ o+='<line x1="'+p.curtain+'" y1="0" x2="'+p.curtain+'" y2="2500" class="curt"/>'; o+='<text x="'+(p.curtain-80)+'" y="1250" class="dim" transform="rotate(-90 '+(p.curtain-80)+' 1250)">занавес на рельсе</text>'; }
+  (p.texts||[]).forEach(function(t){o+=txt(t[0],t[1],t[2],t[3]||"lbl")});
+  (p.dims||[]).forEach(function(d){o+=dim(d)});
+  o+=txt(-280,-180,'СЕВЕР','cmp')+txt(6280,-180,'ЮГ','cmp');
+  return o+'</svg>';
+}
+
+var LG=[['wall','стены и перегородки'],['zone','тамбур и санузел'],['win g','окно'],['win f','фрамуга — откидывается вверх наружу'],['win m','матовое стекло'],['plate-sw','лист металла под печкой'],['dash-sw','пунктир: навесное и откидное'],['sld','раздвижная дверь, гармошка или роллета'],['terr-sw','терраса в перспективе']];
+document.getElementById('lg').innerHTML = LG.map(function(l){
+  return '<p><i class="k-'+l[0].replace(/ /g,'-')+'"></i><span>'+l[1]+'</span></p>'}).join('');
+
+document.getElementById('plans').innerHTML = VAR.map(function(p){
+  return '<section class="variant"><div class="vhead"><span class="vnum">ВАРИАНТ '+p.n+'</span><h3 class="vname">'+p.name+'</h3></div>'
+  + '<p class="idea">'+p.idea+'</p>'
+  + '<div class="sheet">'+draw(p)+'</div>'
+  + '<div class="pm"><div><h3>За</h3><ul class="good"><li>'+p.plus.join('</li><li>')+'</li></ul></div>'
+  + '<div><h3>Против</h3><ul class="bad"><li>'+p.bad.join('</li><li>')+'</li></ul></div></div></section>';
+}).join('');
+</script>
+
+<style>
+svg .wall{fill:var(--wall)}
+svg .zone{fill:var(--zone)}
+svg .fix{fill:var(--fix);stroke:var(--wall);stroke-width:12}
+svg .bed{fill:var(--fix);stroke:var(--wall);stroke-width:12}
+svg .pil{fill:var(--zone);stroke:var(--wall);stroke-width:8}
+svg .fire{fill:var(--fire);stroke:none}
+svg .plate{fill:none;stroke:var(--fire);stroke-width:12;stroke-dasharray:70 45}
+svg .dash{fill:none;stroke:var(--ink2);stroke-width:12;stroke-dasharray:55 40}
+svg .win{stroke:none}
+svg .win.g{fill:var(--glass)}
+svg .win.f{fill:var(--fire)}
+svg .win.m{fill:var(--glass);opacity:.4}
+svg .op{fill:var(--paper)}
+svg .leaf{stroke:var(--wall);stroke-width:26;fill:none}
+svg .arc{stroke:var(--ink2);stroke-width:8;stroke-dasharray:45 35;fill:none}
+svg .mark{fill:none;stroke:var(--ink2);stroke-width:12}
+svg .chair{fill:none;stroke:var(--ink2);stroke-width:12}
+svg .chairback{fill:none;stroke:var(--ink2);stroke-width:26}
+svg .curt{stroke:var(--field);stroke-width:16;stroke-dasharray:110 70}
+svg .thin{stroke:var(--wall);stroke-width:10}
+svg .sld{fill:var(--ink2);opacity:.55}
+svg .sa{stroke:var(--ink2);stroke-width:9}
+svg .terr{fill:none;stroke:var(--field);stroke-width:10;stroke-dasharray:50 45}
+svg .fl{stroke:var(--field);stroke-width:10}
+svg .fa{stroke:var(--field);stroke-width:10;fill:none}
+svg .arh{fill:var(--field)}
+svg text{font-family:Oswald,sans-serif}
+svg .lbl,svg .lblf,svg .lbls{font-size:118px;fill:var(--ink);text-anchor:middle}
+svg .lblf{fill:var(--paper)}
+svg .lbls{fill:var(--ink2);font-size:104px}
+svg .dim{font-family:'IBM Plex Mono',monospace;font-size:108px;fill:var(--ink2);text-anchor:middle}
+svg .dl{stroke:var(--ink2);stroke-width:8}
+svg .field{font-size:132px;fill:var(--field);text-anchor:middle;letter-spacing:22px}
+svg .tl{font-size:112px;fill:var(--field);text-anchor:middle;letter-spacing:6px}
+svg .cmp{font-family:'IBM Plex Mono',monospace;font-size:104px;fill:var(--ink2);text-anchor:middle;letter-spacing:10px}
+.legend i{border:0}
+.k-wall{background:var(--wall)}
+.k-zone{background:var(--zone);outline:1px solid var(--rule)}
+.k-win-g{background:var(--glass)}
+.k-win-f{background:var(--fire)}
+.k-win-m{background:var(--glass);opacity:.4}
+.k-plate-sw{height:0!important;margin-top:11px!important;border-top:2.5px dashed var(--fire)!important}
+.k-dash-sw{height:0!important;margin-top:11px!important;border-top:2.5px dashed var(--ink2)!important}
+.k-sld{background:var(--ink2)}
+.k-terr-sw{height:0!important;margin-top:11px!important;border-top:2.5px dashed var(--field)!important}
+</style>

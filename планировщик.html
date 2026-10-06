@@ -1,0 +1,737 @@
+<!doctype html><meta charset="utf-8">
+<title>Планировщик бытовки</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Spectral:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F3F5F1; --card:#FBFCFA; --ink:#1C241F; --ink2:#4B564E;
+  --rule:#CDD4C8; --wall:#2A332C; --zone:#E0E5DB; --fix:#EDF0EA;
+  --field:#4A7A52; --glass:#2F7183; --fire:#B96D22; --sel:#B0343C;
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+  --paper:#13170F; --card:#1A1F19; --ink:#E9EEE5; --ink2:#A3AE9E;
+  --rule:#2F382F; --wall:#D5DCD2; --zone:#232B23; --fix:#1F261F;
+  --field:#84B388; --glass:#6FB4C4; --fire:#E29C50; --sel:#E8737A;
+}}
+:root[data-theme="dark"]{
+  --paper:#13170F; --card:#1A1F19; --ink:#E9EEE5; --ink2:#A3AE9E;
+  --rule:#2F382F; --wall:#D5DCD2; --zone:#232B23; --fix:#1F261F;
+  --field:#84B388; --glass:#6FB4C4; --fire:#E29C50; --sel:#E8737A;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:Spectral,Georgia,serif;font-size:16px;line-height:1.55;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding:26px 16px 70px}
+h1{font-family:Oswald,Impact,sans-serif;font-weight:600;font-size:clamp(26px,4.4vw,38px);margin:0;line-height:1.05}
+.eyebrow{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:var(--field);margin:0 0 10px}
+.hint{color:var(--ink2);margin:8px 0 20px;font-size:15px;max-width:72ch}
+kbd{font-family:'IBM Plex Mono',monospace;font-size:12.5px;border:1px solid var(--rule);border-radius:3px;padding:1px 5px;background:var(--card)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0 14px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-bottom:16px}
+button,select{font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.04em;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:2px;padding:7px 11px;cursor:pointer}
+button:hover{border-color:var(--ink2)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--field);outline-offset:1px}
+button.warn:hover{border-color:var(--sel);color:var(--sel)}
+.main{display:grid;grid-template-columns:232px 1fr;gap:18px;align-items:start}
+.pal{border:1px solid var(--rule);background:var(--card);padding:12px;max-height:74vh;overflow:auto}
+.pal h3{font-family:Oswald,sans-serif;font-weight:500;font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink2);margin:14px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--rule)}
+.pal h3:first-child{margin-top:0}
+.pal button{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:4px;text-align:left;font-family:Spectral,serif;font-size:14px;letter-spacing:0;border-color:transparent;padding:5px 7px}
+.pal button:hover{border-color:var(--rule);background:var(--paper)}
+.pal b{font-weight:400}
+.pal em{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink2);font-style:normal;white-space:nowrap}
+.stage{border:1px solid var(--rule);background:var(--card);padding:10px;overflow-x:auto}
+svg#plan{display:block;width:100%;min-width:660px;height:auto;touch-action:none;user-select:none}
+.props{margin-top:14px;border:1px solid var(--rule);background:var(--card);padding:12px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}
+.props.off{color:var(--ink2);font-size:14.5px;display:block}
+.f{display:flex;flex-direction:column;gap:3px}
+.f label{font-family:Oswald,sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink2)}
+.f input{font-family:'IBM Plex Mono',monospace;font-size:14px;width:84px;padding:6px 7px;border:1px solid var(--rule);border-radius:2px;background:var(--paper);color:var(--ink)}
+.f input.wide{width:178px;font-family:Spectral,serif}
+details{margin-top:18px;border-top:1px solid var(--rule);padding-top:12px}
+summary{font-family:Oswald,sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink2);cursor:pointer}
+textarea{width:100%;height:150px;margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:9px;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:2px}
+.note{font-size:14px;color:var(--ink2);margin:10px 0 0}
+.tabs{display:flex;gap:6px;margin:0 0 14px;flex-wrap:wrap}
+.tabs button{font-size:13px;padding:8px 14px}
+.tabs button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fig{border:1px solid var(--rule);background:var(--card);padding:12px 12px 6px;margin:0 0 18px;overflow-x:auto}
+.fig figcaption{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.13em;font-size:11.5px;color:var(--field);margin:0 0 3px}
+.fig .cap2{font-size:14px;color:var(--ink2);margin:0 0 8px}
+.fig svg{display:block;width:100%;min-width:620px;height:auto}
+h2{font-family:Oswald,sans-serif;font-weight:500;font-size:19px;margin:28px 0 2px}
+h2:first-child{margin-top:4px}
+.lede{color:var(--ink2);font-size:14.5px;margin:5px 0 0;max-width:76ch}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:12px 0 4px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:Oswald,sans-serif;font-weight:500;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink2);white-space:nowrap}
+td.n{font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+td.mk{font-family:Oswald,sans-serif;font-size:15px;white-space:nowrap}
+td.d{color:var(--ink2);font-size:13.5px}
+ul.pts{font-size:14.5px;color:var(--ink2);padding-left:20px;max-width:78ch}
+ul.pts li{margin-bottom:6px}
+ul.pts b{color:var(--ink);font-weight:600}
+.fig svg text{font-family:Oswald,sans-serif;fill:var(--ink);text-anchor:middle}
+.fig .gnd{stroke:var(--ink);stroke-width:12}
+.fig .gh{stroke:var(--ink2);stroke-width:6;opacity:.45}
+.fig .pile{fill:var(--wall)}
+.fig .fl{fill:var(--zone);stroke:var(--wall);stroke-width:8}
+.fig .wl{fill:var(--card);stroke:var(--wall);stroke-width:12}
+.fig .roof{fill:var(--wall)}
+.fig .op rect{fill:var(--glass);stroke:var(--wall);stroke-width:10}
+.fig .op.frost rect{fill:var(--glass);opacity:.5}
+.fig .op.door rect{fill:var(--fix)}
+.fig .op rect.sash{fill:var(--fire);stroke:var(--wall);stroke-width:10}
+.fig .mul{stroke:var(--wall);stroke-width:12}
+.fig .up{fill:none;stroke:var(--paper);stroke-width:30;stroke-linecap:round;stroke-linejoin:round}
+.fig .tilt{fill:none;stroke:var(--paper);stroke-width:10;stroke-dasharray:52 38}
+.fig .hl{stroke:var(--paper);stroke-width:7;opacity:.75}
+.fig .leafl{stroke:var(--ink2);stroke-width:8}
+.fig .knob{fill:var(--ink2)}
+.fig .tube{fill:var(--wall)}
+.fig .flash{fill:var(--fire)}
+.fig .terr{fill:none;stroke:var(--field);stroke-width:14;stroke-dasharray:95 65}
+.fig .post{stroke:var(--field);stroke-width:10}
+.fig .step{fill:none;stroke:var(--field);stroke-width:9}
+.fig .lv{stroke:var(--rule);stroke-width:6;stroke-dasharray:44 44}
+.fig .lvt{font-family:'IBM Plex Mono',monospace;font-size:100px;fill:var(--ink2);text-anchor:start}
+.fig .cl{font-family:Spectral,serif;font-size:104px;fill:var(--ink2);paint-order:stroke;stroke:var(--card);stroke-width:30px;stroke-linejoin:round}
+.fig .cls{font-family:Spectral,serif;font-size:104px;fill:var(--ink2);text-anchor:start;paint-order:stroke;stroke:var(--card);stroke-width:30px;stroke-linejoin:round}
+.fig .mk{font-family:Oswald,sans-serif;font-size:132px;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:34px;stroke-linejoin:round}
+.fig .sz{font-family:'IBM Plex Mono',monospace;font-size:92px;fill:var(--paper)}
+.fig .end{font-family:'IBM Plex Mono',monospace;font-size:110px;fill:var(--field);letter-spacing:7px}
+.fig .dm{font-family:'IBM Plex Mono',monospace;font-size:108px;fill:var(--ink2);paint-order:stroke;stroke:var(--card);stroke-width:26px;stroke-linejoin:round}
+.fig .dl{stroke:var(--ink2);stroke-width:9}
+.fig .cle{text-anchor:end}
+.fig .terrt{fill:var(--field)}
+@media (max-width:760px){.main{grid-template-columns:1fr}.pal{max-height:none;display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.pal h3{grid-column:1/-1}}
+@media print{.bar,.pal,.props,details,.hint,.eyebrow,.tabs,.lede{display:none}.main{display:block}.stage{border:0}.fig{break-inside:avoid;border:0;padding:0}}
+</style>
+
+<div class="wrap">
+<p class="eyebrow">Бытовка 2,5 × 6,0 м · поле на западе</p>
+<h1>Планировщик бытовки</h1>
+<p class="hint">Три вкладки: <b>план сверху</b> — всё двигается мышкой или пальцем по сетке 5 см; <b>вид снаружи</b> — четыре фасада, они сами пересчитываются из плана; <b>окна и двери</b> — готовая таблица размеров для строителей. На плане: <kbd>R</kbd> повернуть · <kbd>D</kbd> дублировать · <kbd>Delete</kbd> удалить · <kbd>Ctrl</kbd>+<kbd>Z</kbd> отменить · стрелки двигают на 5 см, с <kbd>Shift</kbd> — на 1 см. Всё сохраняется в браузере само.</p>
+
+<div class="tabs">
+  <button id="t-plan" class="on">План сверху</button>
+  <button id="t-elev">Вид снаружи</button>
+  <button id="t-spec">Окна и двери</button>
+</div>
+
+<div class="bar" id="bar-plan">
+  <select id="preset"></select>
+  <button id="load">Загрузить вариант</button>
+  <button id="undo">Отменить</button>
+  <button id="front">На передний план</button>
+  <button id="print">Печать</button>
+  <button id="clear" class="warn">Очистить всё</button>
+  <span id="count" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)"></span>
+</div>
+
+<div class="main" id="v-plan">
+  <div class="pal" id="pal"></div>
+  <div>
+    <div class="stage"><svg id="plan" role="img" aria-label="Редактируемый план бытовки"></svg></div>
+    <div class="props off" id="props">Ничего не выделено. Нажми на предмет на плане или добавь новый из списка слева.</div>
+  </div>
+</div>
+
+<div id="v-elev" hidden>
+  <p class="lede" style="margin-bottom:12px">Четыре взгляда на коробку снаружи. Окна, двери и труба стоят там, где вы их поставили на плане — подвиньте на плане, вернитесь сюда, и фасад пересчитается. Серые пунктирные линии — высоты мебели, от них посчитаны окна.</p>
+  <div class="bar">
+    <div class="f"><label>Свая над землёй, см</label><input id="e-pile" value="50"></div>
+    <div class="f"><label>Пол: лаги и настил, см</label><input id="e-fl" value="20"></div>
+    <div class="f"><label>Уклон крыши, см</label><input id="e-rise" value="35"></div>
+    <div class="f"><label>Труба над кровлей, см</label><input id="e-tube" value="120"></div>
+    <div class="f"><label>Терраса</label><select id="e-terr"><option value="all">вдоль всей западной стены</option><option value="door">только у входа</option><option value="no">нет</option></select></div>
+  </div>
+  <div id="elev"></div>
+</div>
+
+<div id="v-spec" hidden><div id="spec"></div></div>
+
+<details>
+  <summary>Код плана — чтобы сохранить или прислать мне</summary>
+  <p class="note">Нажми «Скопировать», и расстановка окажется в буфере — её можно вставить в чат или сохранить в заметку. Чтобы вернуть сохранённую расстановку, вставь код в это поле и нажми «Применить».</p>
+  <textarea id="code" spellcheck="false"></textarea>
+  <div style="display:flex;gap:8px;margin-top:8px"><button id="copy">Скопировать</button><button id="apply">Применить вставленный</button></div>
+</details>
+</div>
+
+<script>
+var BOXW=6000, BOXH=2500, SNAP=50;
+var PRESETS=[{"n":"01","name":"Кабинет у стены санузла","objs":[{"k":"zone","x":0,"y":0,"w":960,"h":1360,"l":"тамбур"},{"k":"zone","x":0,"y":1440,"w":1460,"h":1060,"l":"санузел"},{"k":"plate","x":1040,"y":250,"w":860,"h":900,"l":""},{"k":"wall","x":960,"y":0,"w":80,"h":1360,"l":""},{"k":"wall","x":0,"y":1360,"w":1540,"h":80,"l":""},{"k":"wall","x":1460,"y":1440,"w":80,"h":1060,"l":""},{"k":"wall","x":2560,"y":1250,"w":80,"h":1250,"l":""},{"k":"furn","x":60,"y":1700,"w":800,"h":800,"l":"душ 80×80"},{"k":"furn","x":900,"y":1850,"w":350,"h":650,"l":"WC"},{"k":"dash","x":900,"y":1460,"w":450,"h":330,"l":"бойлер"},{"k":"fire","x":1060,"y":300,"w":440,"h":450,"l":"печка"},{"k":"furn","x":1620,"y":1320,"w":880,"h":500,"l":"рабочее место 1"},{"k":"furn","x":2740,"y":1900,"w":1610,"h":600,"l":"кухня"},{"k":"dash","x":3800,"y":1950,"w":460,"h":500,"l":"х-к"},{"k":"furn","x":1950,"y":0,"w":2350,"h":500,"l":""},{"k":"furn","x":4400,"y":0,"w":1600,"h":2000,"l":"кровать 2,0 × 1,6 подиум 100 см · хранение"},{"k":"furn","x":4400,"y":2050,"w":1600,"h":450,"l":"стеллаж 45 см + штанга"},{"k":"dash","x":5820,"y":200,"w":180,"h":800,"l":"кондиционер"},{"k":"sink","x":2650,"y":1940,"w":500,"h":500,"l":"мойка"},{"k":"hob","x":3150,"y":2150,"w":300,"h":300,"l":""},{"k":"hob","x":3290,"y":2150,"w":300,"h":300,"l":""},{"k":"chair","x":1835,"y":1875,"w":450,"h":450,"l":"стул"},{"k":"chair","x":3475,"y":595,"w":450,"h":450,"l":"стул"},{"k":"frame","x":1350,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"frame","x":2850,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"win","x":4350,"y":-120,"w":1500,"h":120,"l":"","m":"О-2","b":1150,"t":900},{"k":"win","x":2450,"y":2500,"w":900,"h":120,"l":"","m":"О-3","b":950,"t":1100},{"k":"frost","x":-120,"y":1800,"w":120,"h":500,"l":"","m":"О-4","b":1450,"t":600},{"k":"door","x":-120,"y":300,"w":120,"h":900,"l":"вход","m":"Д-1","b":0,"t":2050},{"k":"slide","x":960,"y":450,"w":80,"h":700,"l":"","m":"Д-2","b":0,"t":1950},{"k":"slide","x":1460,"y":1600,"w":80,"h":700,"l":"","m":"Д-2","b":0,"t":1950}]},{"n":"02","name":"Две комнаты через тамбур","objs":[{"k":"zone","x":1840,"y":0,"w":1420,"h":1160,"l":"тамбур · прихожая"},{"k":"zone","x":1840,"y":1240,"w":1420,"h":1260,"l":"санузел"},{"k":"plate","x":3340,"y":1900,"w":960,"h":600,"l":""},{"k":"wall","x":1760,"y":0,"w":80,"h":2500,"l":""},{"k":"wall","x":3260,"y":0,"w":80,"h":2500,"l":""},{"k":"wall","x":1840,"y":1160,"w":1420,"h":80,"l":""},{"k":"furn","x":1860,"y":1700,"w":800,"h":800,"l":"душ 80×80"},{"k":"furn","x":2760,"y":1850,"w":350,"h":650,"l":"WC"},{"k":"dash","x":2700,"y":1290,"w":450,"h":330,"l":"бойлер"},{"k":"furn","x":0,"y":1900,"w":1760,"h":600,"l":"кухня"},{"k":"dash","x":1250,"y":1950,"w":460,"h":500,"l":"х-к"},{"k":"furn","x":100,"y":0,"w":1660,"h":500,"l":"обед + рабочее место 1"},{"k":"fire","x":3400,"y":1950,"w":500,"h":500,"l":"печка"},{"k":"furn","x":3400,"y":0,"w":560,"h":1100,"l":"рабочее место 2"},{"k":"furn","x":4400,"y":0,"w":1600,"h":2000,"l":"кровать 2,0 × 1,6 подиум 100 см · хранение"},{"k":"furn","x":4400,"y":2050,"w":1600,"h":450,"l":"стеллаж 45 см + штанга"},{"k":"dash","x":0,"y":600,"w":180,"h":800,"l":"кондиционер"},{"k":"sink","x":0,"y":1940,"w":500,"h":500,"l":"мойка"},{"k":"hob","x":610,"y":2150,"w":300,"h":300,"l":""},{"k":"hob","x":750,"y":2150,"w":300,"h":300,"l":""},{"k":"chair","x":335,"y":595,"w":450,"h":450,"l":"стул"},{"k":"chair","x":3925,"y":325,"w":450,"h":450,"l":"стул"},{"k":"frame","x":150,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"frame","x":2850,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"win","x":4350,"y":-120,"w":1500,"h":120,"l":"","m":"О-2","b":1150,"t":900},{"k":"win","x":150,"y":2500,"w":900,"h":120,"l":"","m":"О-3","b":950,"t":1100},{"k":"frost","x":2000,"y":2500,"w":500,"h":120,"l":"","m":"О-4","b":1450,"t":600},{"k":"door","x":1650,"y":-120,"w":900,"h":120,"l":"вход","m":"Д-1","b":0,"t":2050},{"k":"slide","x":1760,"y":350,"w":80,"h":700,"l":"","m":"Д-2","b":0,"t":1950},{"k":"slide","x":3260,"y":350,"w":80,"h":700,"l":"","m":"Д-2","b":0,"t":1950},{"k":"slide","x":3260,"y":1300,"w":80,"h":700,"l":"","m":"Д-2","b":0,"t":1950}]},{"n":"03","name":"Печка в углу, работа врозь","objs":[{"k":"zone","x":2240,"y":1640,"w":760,"h":860,"l":"тамбур"},{"k":"zone","x":3080,"y":1340,"w":1200,"h":1160,"l":"санузел"},{"k":"plate","x":50,"y":2000,"w":950,"h":500,"l":""},{"k":"wall","x":2160,"y":1560,"w":80,"h":940,"l":""},{"k":"wall","x":2160,"y":1560,"w":920,"h":80,"l":""},{"k":"wall","x":3000,"y":1260,"w":80,"h":1240,"l":""},{"k":"wall","x":3000,"y":1260,"w":1360,"h":80,"l":""},{"k":"wall","x":4280,"y":1340,"w":80,"h":1160,"l":""},{"k":"furn","x":0,"y":0,"w":600,"h":1750,"l":""},{"k":"dash","x":100,"y":1100,"w":460,"h":480,"l":"х-к"},{"k":"fire","x":100,"y":2050,"w":500,"h":450,"l":"печка"},{"k":"furn","x":1250,"y":1300,"w":950,"h":500,"l":"рабочее место 1"},{"k":"furn","x":2250,"y":0,"w":1000,"h":500,"l":""},{"k":"furn","x":3350,"y":0,"w":950,"h":500,"l":""},{"k":"furn","x":3120,"y":1700,"w":800,"h":800,"l":"душ 80×80"},{"k":"furn","x":3930,"y":1850,"w":350,"h":650,"l":"WC"},{"k":"dash","x":3840,"y":1390,"w":440,"h":330,"l":"бойлер"},{"k":"furn","x":4400,"y":0,"w":1600,"h":2000,"l":"кровать 2,0 × 1,6 подиум 100 см · хранение"},{"k":"furn","x":4400,"y":2050,"w":1600,"h":450,"l":"стеллаж 45 см + штанга"},{"k":"dash","x":5820,"y":200,"w":180,"h":800,"l":"кондиционер"},{"k":"sink","x":50,"y":230,"w":500,"h":500,"l":"мойка"},{"k":"hob","x":150,"y":680,"w":300,"h":300,"l":""},{"k":"hob","x":150,"y":820,"w":300,"h":300,"l":""},{"k":"chair","x":1500,"y":1875,"w":450,"h":450,"l":"стул"},{"k":"chair","x":3575,"y":595,"w":450,"h":450,"l":"стул"},{"k":"win","x":0,"y":-120,"w":900,"h":120,"l":"","m":"О-3","b":950,"t":1100},{"k":"win","x":0,"y":-120,"w":1500,"h":120,"l":"","m":"О-2","b":1150,"t":900},{"k":"frame","x":1350,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"frame","x":2850,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"win","x":4350,"y":-120,"w":1500,"h":120,"l":"","m":"О-2","b":1150,"t":900},{"k":"win","x":-120,"y":150,"w":120,"h":900,"l":"","m":"О-3","b":950,"t":1100},{"k":"frost","x":3400,"y":2500,"w":500,"h":120,"l":"","m":"О-4","b":1450,"t":600},{"k":"door","x":2200,"y":2500,"w":900,"h":120,"l":"вход","m":"Д-1","b":0,"t":2050},{"k":"slide","x":2300,"y":1560,"w":700,"h":80,"l":"","m":"Д-2","b":0,"t":1950},{"k":"slide","x":3300,"y":1260,"w":700,"h":80,"l":"","m":"Д-2","b":0,"t":1950}]},{"n":"04","name":"Кухня у санузла","objs":[{"k":"zone","x":0,"y":0,"w":800,"h":1300,"l":"тамбур"},{"k":"zone","x":0,"y":1380,"w":1460,"h":1120,"l":"санузел"},{"k":"plate","x":3600,"y":70,"w":800,"h":550,"l":""},{"k":"wall","x":800,"y":0,"w":80,"h":1300,"l":""},{"k":"wall","x":0,"y":1300,"w":1540,"h":80,"l":""},{"k":"wall","x":1460,"y":1380,"w":80,"h":1120,"l":""},{"k":"wall","x":2800,"y":1400,"w":80,"h":1100,"l":""},{"k":"furn","x":40,"y":1700,"w":800,"h":800,"l":"душ 80×80"},{"k":"furn","x":850,"y":1430,"w":610,"h":350,"l":"WC"},{"k":"dash","x":900,"y":1850,"w":450,"h":340,"l":"бойлер"},{"k":"furn","x":900,"y":0,"w":600,"h":550,"l":"рабочее место 2"},{"k":"furn","x":1540,"y":0,"w":1760,"h":600,"l":"кухня"},{"k":"dash","x":1560,"y":80,"w":460,"h":500,"l":"х-к"},{"k":"furn","x":1620,"y":1450,"w":1100,"h":500,"l":"рабочее место 1"},{"k":"dash","x":2900,"y":750,"w":700,"h":650,"l":"откидной стол"},{"k":"fire","x":3650,"y":120,"w":450,"h":450,"l":"печка"},{"k":"furn","x":4400,"y":0,"w":1600,"h":450,"l":"стеллаж 45 см + штанга"},{"k":"furn","x":4400,"y":500,"w":1600,"h":2000,"l":"кровать 2,0 × 1,6 подиум 100 см · хранение"},{"k":"dash","x":5820,"y":1400,"w":180,"h":900,"l":"кондиционер"},{"k":"sink","x":2050,"y":50,"w":500,"h":500,"l":"мойка"},{"k":"hob","x":2550,"y":150,"w":300,"h":300,"l":""},{"k":"hob","x":2690,"y":150,"w":300,"h":300,"l":""},{"k":"chair","x":975,"y":625,"w":450,"h":450,"l":"стул"},{"k":"chair","x":1945,"y":1975,"w":450,"h":450,"l":"стул"},{"k":"win","x":700,"y":-120,"w":900,"h":120,"l":"","m":"О-3","b":950,"t":1100},{"k":"frame","x":1900,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"win","x":3400,"y":-120,"w":900,"h":120,"l":"","m":"О-3","b":950,"t":1100},{"k":"win","x":4350,"y":2500,"w":1500,"h":120,"l":"","m":"О-2","b":1150,"t":900},{"k":"frost","x":150,"y":2500,"w":500,"h":120,"l":"","m":"О-4","b":1450,"t":600},{"k":"door","x":-120,"y":200,"w":120,"h":900,"l":"вход","m":"Д-1","b":0,"t":2050},{"k":"slide","x":50,"y":1300,"w":700,"h":80,"l":"","m":"Д-2","b":0,"t":1950}]},{"n":"05","name":"Две комнаты, двери у кухни","objs":[{"k":"zone","x":1840,"y":0,"w":1420,"h":1200,"l":"санузел"},{"k":"zone","x":1840,"y":1280,"w":1420,"h":1220,"l":"тамбур"},{"k":"plate","x":3700,"y":1950,"w":700,"h":550,"l":""},{"k":"wall","x":1760,"y":0,"w":80,"h":2500,"l":""},{"k":"wall","x":3260,"y":0,"w":80,"h":2500,"l":""},{"k":"wall","x":1840,"y":1200,"w":1420,"h":80,"l":""},{"k":"furn","x":1880,"y":350,"w":800,"h":800,"l":"душ 80×80"},{"k":"furn","x":2800,"y":0,"w":350,"h":650,"l":"WC"},{"k":"dash","x":2780,"y":700,"w":450,"h":330,"l":"бойлер"},{"k":"furn","x":0,"y":1900,"w":1760,"h":600,"l":"кухня"},{"k":"dash","x":1250,"y":1950,"w":460,"h":500,"l":"х-к"},{"k":"furn","x":100,"y":0,"w":1660,"h":500,"l":"обед + рабочее место 1"},{"k":"fire","x":3750,"y":2000,"w":450,"h":450,"l":"печка"},{"k":"dash","x":3400,"y":0,"w":950,"h":500,"l":"откидной стол рабочее место 2"},{"k":"furn","x":4400,"y":0,"w":1600,"h":2000,"l":"кровать 2,0 × 1,6 подиум 100 см · хранение"},{"k":"furn","x":4400,"y":2050,"w":1600,"h":450,"l":"стеллаж 45 см + штанга"},{"k":"dash","x":0,"y":600,"w":180,"h":800,"l":"кондиционер"},{"k":"sink","x":0,"y":1940,"w":500,"h":500,"l":"мойка"},{"k":"hob","x":610,"y":2150,"w":300,"h":300,"l":""},{"k":"hob","x":750,"y":2150,"w":300,"h":300,"l":""},{"k":"chair","x":675,"y":625,"w":450,"h":450,"l":"стул"},{"k":"chair","x":3645,"y":645,"w":450,"h":450,"l":"стул"},{"k":"frame","x":300,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"frost","x":1900,"y":-120,"w":500,"h":120,"l":"","m":"О-4","b":1450,"t":600},{"k":"frame","x":2850,"y":-120,"w":1200,"h":120,"l":"","m":"О-1","b":750,"t":1300},{"k":"win","x":4350,"y":-120,"w":1500,"h":120,"l":"","m":"О-2","b":1150,"t":900},{"k":"win","x":150,"y":2500,"w":900,"h":120,"l":"","m":"О-3","b":950,"t":1100},{"k":"door","x":2200,"y":2500,"w":900,"h":120,"l":"вход","m":"Д-1","b":0,"t":2050},{"k":"slide","x":1760,"y":1250,"w":80,"h":700,"l":"","m":"Д-2","b":0,"t":1950},{"k":"slide","x":3260,"y":1250,"w":80,"h":700,"l":"","m":"Д-2","b":0,"t":1950},{"k":"slide","x":2600,"y":1200,"w":700,"h":80,"l":"","m":"Д-2","b":0,"t":1950}]}];
+
+var PAL=[
+ {g:'Мебель',items:[
+  {k:'furn',w:2000,h:1600,l:'кровать 2,0 × 1,6'},
+  {k:'furn',w:1600,h:450,l:'стеллаж + штанга'},
+  {k:'furn',w:1100,h:500,l:'стол'},
+  {k:'dash',w:700,h:600,l:'откидной стол'},
+  {k:'furn',w:1500,h:500,l:'столешница-подоконник'},
+  {k:'furn',w:600,h:600,l:'шкаф'},
+  {k:'chair',w:450,h:450,l:'стул'}]},
+ {g:'Кухня и санузел',items:[
+  {k:'furn',w:1600,h:600,l:'кухня'},
+  {k:'sink',w:500,h:500,l:'мойка'},
+  {k:'hob',w:300,h:300,l:''},
+  {k:'dash',w:500,h:500,l:'холодильник'},
+  {k:'furn',w:800,h:800,l:'душ 80×80'},
+  {k:'furn',w:350,h:650,l:'WC'},
+  {k:'dash',w:450,h:450,l:'бойлер'}]},
+ {g:'Тепло и воздух',items:[
+  {k:'fire',w:450,h:450,l:'печка'},
+  {k:'plate',w:800,h:550,l:''},
+  {k:'dash',w:800,h:200,l:'кондиционер'}]},
+ {g:'Стены и проёмы',items:[
+  {k:'zone',w:1400,h:1100,l:'тамбур'},
+  {k:'wall',w:1000,h:80,l:''},
+  {k:'wall',w:80,h:1000,l:''},
+  {k:'slide',m:'Д-2',w:700,h:80,b:0,t:1950,l:''},
+  {k:'slide',m:'Д-2',w:800,h:80,b:0,t:1950,l:''},
+  {k:'door',m:'Д-1',w:900,h:120,b:0,t:2050,l:'вход'},
+  {k:'frame',m:'О-1',w:1200,h:120,b:750,t:1300,l:''},
+  {k:'win',m:'О-2',w:1500,h:120,b:1150,t:900,l:''},
+  {k:'win',m:'О-3',w:900,h:120,b:950,t:1100,l:''},
+  {k:'frost',m:'О-4',w:500,h:120,b:1450,t:600,l:''}]}];
+
+/* проёмы: низ (b) и высота (t) в мм от чистого пола — значения по умолчанию */
+var ODEF={frame:{b:750,t:1300},win:{b:1150,t:900},frost:{b:1450,t:600},door:{b:0,t:2050},slide:{b:0,t:1950}};
+
+var NAME={furn:'мебель',dash:'пунктиром',fire:'печка',plate:'лист металла',chair:'стул',sink:'мойка',hob:'конфорки',zone:'зона',wall:'стена',slide:'раздвижная',door:'входная',win:'окно',frame:'подъёмное',frost:'матовое'};
+
+var objs=[], sel=null, hist=[], uid=1;
+var svg=document.getElementById('plan');
+
+function clone(a){return JSON.parse(JSON.stringify(a))}
+function push(){hist.push(clone(objs)); if(hist.length>40)hist.shift()}
+function snap(v){return Math.round(v/SNAP)*SNAP}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function save(){try{localStorage.setItem('bytovka-planner-v1',JSON.stringify(objs))}catch(e){}}
+function load(){try{var r=localStorage.getItem('bytovka-planner-v1');return r?JSON.parse(r):null}catch(e){return null}}
+
+function setPreset(i){push(); objs=clone(PRESETS[i].objs).map(function(o){o.id=uid++;return o}); sel=null; draw(); save()}
+
+function draw(){
+  var s='<defs><pattern id="g1" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M100 0 L0 0 0 100" fill="none" stroke="var(--rule)" stroke-width="4" opacity=".55"/></pattern></defs>';
+  s+='<rect x="0" y="0" width="'+BOXW+'" height="'+BOXH+'" fill="url(#g1)"/>';
+  s+='<text x="'+(BOXW/2)+'" y="-220" class="cmp fld">ПОЛЕ · ЗАКАТ · ЗАПАД</text>';
+  s+='<line x1="0" y1="-150" x2="'+BOXW+'" y2="-150" class="fldline"/>';
+  s+='<text x="-330" y="-30" class="cmp">СЕВЕР</text><text x="'+(BOXW+300)+'" y="-30" class="cmp">ЮГ</text>';
+  s+='<rect x="-120" y="-120" width="'+(BOXW+240)+'" height="120" class="box"/>';
+  s+='<rect x="-120" y="'+BOXH+'" width="'+(BOXW+240)+'" height="120" class="box"/>';
+  s+='<rect x="-120" y="0" width="120" height="'+BOXH+'" class="box"/>';
+  s+='<rect x="'+BOXW+'" y="0" width="120" height="'+BOXH+'" class="box"/>';
+  objs.forEach(function(o){ s+=shape(o) });
+  var o=cur();
+  if(o){
+    s+='<rect x="'+(o.x-40)+'" y="'+(o.y-40)+'" width="'+(o.w+80)+'" height="'+(o.h+80)+'" class="selbox"/>';
+    s+=guide(o);
+    s+='<rect x="'+(o.x+o.w-110)+'" y="'+(o.y+o.h-110)+'" width="220" height="220" class="grip" data-handle="1" data-id="'+o.id+'"/>';
+  }
+  s+='<g class="dimrow">'+dim(0,BOXW,BOXH+330,(BOXW/1000).toFixed(2).replace('.',','))+'</g>';
+  svg.setAttribute('viewBox','-640 -430 '+(BOXW+1280)+' '+(BOXH+1000));
+  svg.innerHTML=s;
+  document.getElementById('count').textContent=objs.length+' предметов';
+  if(typeof view!=='undefined'){ if(view==='elev')drawElev(); if(view==='spec')drawSpec() }
+  document.getElementById('code').value=JSON.stringify(objs.map(function(o){var c={};for(var k in o)if(k!=='id')c[k]=o[k];return c}));
+  props();
+}
+function cur(){return objs.filter(function(o){return o.id===sel})[0]}
+
+function shape(o){
+  var cls=o.k, g='<g data-id="'+o.id+'" class="obj '+cls+(o.id===sel?' on':'')+'">';
+  if(o.k==='chair'||o.k==='sink'||o.k==='hob'){
+    var r=Math.min(o.w,o.h)/2;
+    g+='<circle cx="'+(o.x+o.w/2)+'" cy="'+(o.y+o.h/2)+'" r="'+r+'" class="mark"/>';
+    if(o.k==='chair') g+='<path d="M '+(o.x+o.w*0.08)+' '+(o.y+o.h*0.78)+' A '+r+' '+r+' 0 0 0 '+(o.x+o.w*0.92)+' '+(o.y+o.h*0.78)+'" class="back"/>';
+    if(Math.min(o.w,o.h)>=380) g+='<text x="'+(o.x+o.w/2)+'" y="'+(o.y+o.h-40)+'" class="sz">'+cm(o.w)+'×'+cm(o.h)+'</text>';
+    g+='<rect x="'+o.x+'" y="'+o.y+'" width="'+o.w+'" height="'+o.h+'" class="hit"/>';
+    return g+'</g>';
+  }
+  g+='<rect x="'+o.x+'" y="'+o.y+'" width="'+o.w+'" height="'+o.h+'"/>';
+  if(o.k==='slide'){ var hz=o.w>o.h;
+    g+= hz ? '<rect x="'+o.x+'" y="'+(o.y+o.h/2-30)+'" width="'+(o.w*0.4)+'" height="60" class="leaf"/>'
+           : '<rect x="'+(o.x+o.w/2-30)+'" y="'+o.y+'" width="60" height="'+(o.h*0.4)+'" class="leaf"/>';
+  }
+  if(o.k==='door'){ var hz2=o.w>o.h;
+    g+= hz2 ? '<path d="M '+o.x+' '+o.y+' A '+o.w+' '+o.w+' 0 0 1 '+(o.x+o.w)+' '+(o.y+o.w)+'" class="arc"/>'
+            : '<path d="M '+o.x+' '+o.y+' A '+o.h+' '+o.h+' 0 0 0 '+(o.x+o.h)+' '+(o.y+o.h)+'" class="arc"/>';
+  }
+  if(ODEF[o.k]&&o.k!=='slide'){
+    /* марку ставим внутрь коробки — снаружи там компас и размерные линии */
+    var mk=markOf(o), mcx=o.x+o.w/2, mcy=o.y+o.h/2;
+    if(o.w>o.h){ var my=(o.y<BOXH/2)?(o.y+o.h+250):(o.y-120);
+      g+='<text x="'+mcx+'" y="'+my+'" class="omk">'+mk+'</text>' }
+    else { var mxx=(o.x<BOXW/2)?(o.x+o.w+250):(o.x-120);
+      g+='<text x="'+mxx+'" y="'+mcy+'" class="omk" transform="rotate(-90 '+mxx+' '+mcy+')">'+mk+'</text>' }
+  }
+  var gx=o.x+o.w/2, gy=o.y+o.h/2, vert=o.h>o.w;
+  if(Math.min(o.w,o.h)>=190 && Math.max(o.w,o.h)>=330){
+    var sz=cm(o.w)+'×'+cm(o.h);
+    if(!vert || o.w>=330) g+='<text x="'+gx+'" y="'+(o.y+o.h-55)+'" class="sz">'+sz+'</text>';
+    else g+='<text x="'+(o.x+o.w-55)+'" y="'+gy+'" class="sz" transform="rotate(-90 '+(o.x+o.w-55)+' '+gy+')">'+sz+'</text>';
+  }
+  if(o.l){
+    var rot=o.w<o.h*0.55, cx=o.x+o.w/2, cy=o.y+o.h/2 - (Math.min(o.w,o.h)>=190&&Math.max(o.w,o.h)>=330 ? 55 : 0);
+    var words=o.l.split(' '), lines=[], line='';
+    var maxch=Math.max(4,Math.floor((rot?o.h:o.w)/62));
+    words.forEach(function(wd){ if((line+' '+wd).trim().length>maxch){ if(line)lines.push(line); line=wd } else line=(line+' '+wd).trim() });
+    if(line)lines.push(line);
+    lines.forEach(function(t,i){
+      var off=(i-(lines.length-1)/2)*140;
+      g+= rot ? '<text x="'+(cx+off)+'" y="'+cy+'" class="lb" transform="rotate(-90 '+(cx+off)+' '+cy+')">'+esc(t)+'</text>'
+              : '<text x="'+cx+'" y="'+(cy+off+40)+'" class="lb">'+esc(t)+'</text>';
+    });
+  }
+  return g+'</g>';
+}
+
+function dim(a,b,at,t,vert){
+  if(vert) return '<line x1="'+at+'" y1="'+a+'" x2="'+at+'" y2="'+b+'" class="dl"/><line x1="'+(at-50)+'" y1="'+a+'" x2="'+(at+50)+'" y2="'+a+'" class="dl"/><line x1="'+(at-50)+'" y1="'+b+'" x2="'+(at+50)+'" y2="'+b+'" class="dl"/><text x="'+at+'" y="'+((a+b)/2)+'" class="dm" transform="rotate(-90 '+at+' '+((a+b)/2)+')">'+t+'</text>';
+  return '<line x1="'+a+'" y1="'+at+'" x2="'+b+'" y2="'+at+'" class="dl"/><line x1="'+a+'" y1="'+(at-50)+'" x2="'+a+'" y2="'+(at+50)+'" class="dl"/><line x1="'+b+'" y1="'+(at-50)+'" x2="'+b+'" y2="'+(at+50)+'" class="dl"/><text x="'+((a+b)/2)+'" y="'+(at-45)+'" class="dm">'+t+'</text>';
+}
+function cm(v){return (v/10).toFixed(0)}
+function guide(o){
+  var s='', y=o.y+o.h/2, x=o.x+o.w/2;
+  if(o.x>60) s+=dim(0,o.x,o.y-200,cm(o.x));
+  if(BOXW-(o.x+o.w)>60) s+=dim(o.x+o.w,BOXW,o.y-200,cm(BOXW-o.x-o.w));
+  if(o.y>60) s+=dim(0,o.y,o.x+o.w+230,cm(o.y),1);
+  if(BOXH-(o.y+o.h)>60) s+=dim(o.y+o.h,BOXH,o.x+o.w+230,cm(BOXH-o.y-o.h),1);
+  return s;
+}
+
+function props(){
+  var p=document.getElementById('props'), o=cur();
+  if(!o){ p.className='props off'; p.innerHTML='Ничего не выделено. Нажми на предмет на плане или добавь новый из списка слева.'; return }
+  p.className='props';
+  p.innerHTML=
+   '<div class="f"><label>Подпись</label><input class="wide" id="pl" value="'+esc(o.l||'')+'"></div>'+
+   '<div class="f"><label>Длина, см</label><input id="pw" value="'+cm(o.w)+'"></div>'+
+   '<div class="f"><label>Глубина, см</label><input id="ph" value="'+cm(o.h)+'"></div>'+
+   '<div class="f"><label>От севера, см</label><input id="px" value="'+cm(o.x)+'"></div>'+
+   '<div class="f"><label>От поля, см</label><input id="py" value="'+cm(o.y)+'"></div>'+
+   (ODEF[o.k]?'<div class="f"><label>Низ проёма, см</label><input id="pb" value="'+cm(ob(o))+'"></div>'+
+              '<div class="f"><label>Высота проёма, см</label><input id="pt" value="'+cm(ot(o))+'"></div>':'')+
+   '<button id="rot">Повернуть</button><button id="dup">Дублировать</button><button id="del" class="warn">Удалить</button>'+
+   '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;color:var(--ink2)">'+NAME[o.k]+'</span>';
+  ['pl','pw','ph','px','py','pb','pt'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.onchange=function(){ var q=cur(); if(!q)return; push();
+      if(id==='pl') q.l=el.value;
+      else { var v=parseFloat(el.value.replace(',','.')); if(isNaN(v))return; v=v*10;
+        if(id==='pw')q.w=Math.max(100,v); if(id==='ph')q.h=Math.max(100,v);
+        if(id==='px')q.x=v; if(id==='py')q.y=v;
+        if(id==='pb')q.b=Math.max(0,v); if(id==='pt')q.t=Math.max(100,v); }
+      draw(); save(); };
+  });
+  document.getElementById('rot').onclick=function(){var ob=cur();push();var cx=ob.x+ob.w/2,cy=ob.y+ob.h/2,t=ob.w;ob.w=ob.h;ob.h=t;ob.x=snap(cx-ob.w/2);ob.y=snap(cy-ob.h/2);draw();save()};
+  document.getElementById('dup').onclick=function(){var ob=cur();push();var c=clone(ob);c.id=uid++;c.x+=200;c.y+=200;objs.push(c);sel=c.id;draw();save()};
+  document.getElementById('del').onclick=function(){push();objs=objs.filter(function(q){return q.id!==sel});sel=null;draw();save()};
+}
+
+function pt(e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+var drag=null;
+svg.addEventListener('pointerdown',function(e){
+  var t=e.target.closest('[data-id]');
+  if(!t){ sel=null; draw(); return }
+  var id=+t.getAttribute('data-id'), o=objs.filter(function(q){return q.id===id})[0];
+  if(!o)return;
+  sel=id; push();
+  var p=pt(e);
+  drag={id:id, mx:p.x, my:p.y, ox:o.x, oy:o.y, ow:o.w, oh:o.h, rs:t.hasAttribute('data-handle')};
+  svg.setPointerCapture(e.pointerId); draw(); e.preventDefault();
+});
+svg.addEventListener('pointermove',function(e){
+  if(!drag)return; var o=objs.filter(function(q){return q.id===drag.id})[0]; if(!o)return;
+  var p=pt(e), dx=p.x-drag.mx, dy=p.y-drag.my;
+  if(drag.rs){ o.w=Math.max(100,snap(drag.ow+dx)); o.h=Math.max(100,snap(drag.oh+dy)); }
+  else { o.x=Math.max(-240,Math.min(BOXW+120,snap(drag.ox+dx))); o.y=Math.max(-240,Math.min(BOXH+120,snap(drag.oy+dy))); }
+  draw();
+});
+svg.addEventListener('pointerup',function(e){ if(drag){drag=null;save()} });
+svg.addEventListener('pointercancel',function(){ if(drag){drag=null;save()} });
+
+document.addEventListener('keydown',function(e){
+  if(/input|textarea|select/i.test(e.target.tagName))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){ if(hist.length){objs=hist.pop();sel=null;draw();save()} e.preventDefault(); return }
+  var o=cur(); if(!o)return;
+  var step=e.shiftKey?10:50, moved=false;
+  if(e.key==='ArrowLeft'){o.x-=step;moved=true} if(e.key==='ArrowRight'){o.x+=step;moved=true}
+  if(e.key==='ArrowUp'){o.y-=step;moved=true} if(e.key==='ArrowDown'){o.y+=step;moved=true}
+  if(e.key==='Delete'||e.key==='Backspace'){push();objs=objs.filter(function(q){return q.id!==sel});sel=null;draw();save();e.preventDefault();return}
+  if(e.key==='r'||e.key==='R'||e.key==='к'||e.key==='К'){document.getElementById('rot').click();return}
+  if(e.key==='d'||e.key==='D'||e.key==='в'||e.key==='В'){document.getElementById('dup').click();return}
+  if(e.key==='Escape'){sel=null;draw();return}
+  if(moved){draw();save();e.preventDefault()}
+});
+
+var pal=document.getElementById('pal'), ph='';
+PAL.forEach(function(gr){ ph+='<h3>'+gr.g+'</h3>';
+  gr.items.forEach(function(it,i){
+    var nm=it.m?(it.m+' '+NAME[it.k]):(it.l||NAME[it.k]);
+    var sz=it.t?(cm(Math.max(it.w,it.h))+'×'+cm(it.t)):(cm(it.w)+'×'+cm(it.h));
+    ph+='<button data-g="'+esc(gr.g)+'" data-i="'+i+'"><b>'+esc(nm)+'</b><em>'+sz+'</em></button>' });
+});
+pal.innerHTML=ph;
+pal.addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b)return;
+  var gr=PAL.filter(function(g){return g.g===b.getAttribute('data-g')})[0];
+  var it=gr.items[+b.getAttribute('data-i')];
+  push();
+  var o={id:uid++,k:it.k,w:it.w,h:it.h,l:it.l,x:snap(BOXW/2-it.w/2),y:snap(BOXH/2-it.h/2)};
+  if(it.m){o.m=it.m;o.b=it.b;o.t=it.t}
+  objs.push(o); sel=o.id; draw(); save();
+});
+
+var ps=document.getElementById('preset');
+ps.innerHTML=PRESETS.map(function(p,i){return '<option value="'+i+'">Вариант '+p.n+' — '+esc(p.name)+'</option>'}).join('')+'<option value="-1">Пустая коробка</option>';
+document.getElementById('load').onclick=function(){
+  var v=+ps.value;
+  if(objs.length && !confirm('Заменить то, что сейчас на плане?'))return;
+  if(v<0){push();objs=[];sel=null;draw();save()} else setPreset(v);
+};
+document.getElementById('undo').onclick=function(){ if(hist.length){objs=hist.pop();sel=null;draw();save()} };
+document.getElementById('front').onclick=function(){ var o=cur(); if(!o)return; push(); objs=objs.filter(function(q){return q.id!==o.id}); objs.push(o); draw(); save() };
+document.getElementById('clear').onclick=function(){ if(confirm('Убрать всё с плана?')){push();objs=[];sel=null;draw();save()} };
+document.getElementById('print').onclick=function(){ sel=null; draw(); window.print() };
+document.getElementById('copy').onclick=function(){ var t=document.getElementById('code'); t.select();
+  try{ navigator.clipboard.writeText(t.value) }catch(e){ document.execCommand('copy') }
+  this.textContent='Скопировано'; var b=this; setTimeout(function(){b.textContent='Скопировать'},1600); };
+document.getElementById('apply').onclick=function(){
+  try{ var a=JSON.parse(document.getElementById('code').value);
+    if(!Array.isArray(a))throw 0;
+    push(); objs=a.map(function(o){o.id=uid++;return o}); sel=null; draw(); save();
+  }catch(e){ alert('Не похоже на код плана. Скопируй его целиком, от первой скобки до последней.') }
+};
+
+
+/* ---------- вид снаружи: четыре фасада, считаются из плана ---------- */
+
+var EX={pile:500,fl:200,rise:350,over:250,eave:300,tube:1200,terr:'all'};
+function zF(){return EX.pile+EX.fl}            /* чистый пол над землёй */
+function zC(){return zF()+2200}                /* потолок */
+function zRoofY(y){return zC()+EX.over+EX.rise-(y/BOXH)*EX.rise}   /* верх кровли над планной y */
+
+var SIDES=[
+ {s:'w',L:BOXW,flip:0,t:'Запад · поле и закат',sub:'длинная стена 6,0 м. Высокая сторона крыши, здесь терраса и окна на закат.',la:'север',lb:'юг'},
+ {s:'e',L:BOXW,flip:1,t:'Восток · подход и въезд',sub:'длинная стена 6,0 м. Низкая сторона крыши — вода уходит сюда, не на террасу.',la:'юг',lb:'север'},
+ {s:'n',L:BOXH,flip:1,t:'Север · торец',sub:'короткая стена 2,5 м. Виден уклон крыши и свесы.',la:'восток',lb:'запад'},
+ {s:'s',L:BOXH,flip:0,t:'Юг · торец',sub:'короткая стена 2,5 м. Самая тёплая сторона.',la:'запад',lb:'восток'}
+];
+
+function markOf(o){
+  if(o.m)return o.m;
+  var ln=Math.max(o.w,o.h);
+  if(o.k==='frost')return 'О-4';
+  if(o.k==='frame')return 'О-1';
+  if(o.k==='win')return ln>=1400?'О-2':(ln>=900?'О-1':'О-3');
+  if(o.k==='door')return 'Д-1';
+  if(o.k==='slide')return 'Д-2';
+  return null;
+}
+function ob(o){return o.b==null?(ODEF[o.k]?ODEF[o.k].b:0):o.b}
+function ot(o){return o.t==null?(ODEF[o.k]?ODEF[o.k].t:1000):o.t}
+
+function openOn(s){
+  var r=[];
+  objs.forEach(function(o){
+    if(!ODEF[o.k]||o.k==='slide')return;
+    var pos,len;
+    if(s==='w'){ if(o.y>-60)return; pos=o.x; len=o.w }
+    else if(s==='e'){ if(o.y<BOXH-60)return; pos=o.x; len=o.w }
+    else if(s==='n'){ if(o.x>-60)return; pos=o.y; len=o.h }
+    else { if(o.x<BOXW-60)return; pos=o.y; len=o.h }
+    r.push({o:o,pos:pos,len:len});
+  });
+  return r.sort(function(a,b){return a.pos-b.pos});
+}
+
+function wallTop(s,x,L){                       /* низ кровли над точкой фасада */
+  if(s==='w')return zRoofY(0);
+  if(s==='e')return zRoofY(BOXH);
+  return zRoofY((s==='n')?(BOXH-x):x);
+}
+
+function facade(c){
+  var L=c.L, s=c.s, E=EX.eave, zf=zF(), zc=zC(), g='', RT=110;
+  var zl=wallTop(s,-E,L), zr=wallTop(s,L+E,L), zrf=Math.max(zl,zr), ztop=zrf;
+  var ops=openOn(s);
+  ops.forEach(function(d){ d.X=c.flip?(L-d.pos-d.len):d.pos });
+  ops.sort(function(a,b){return a.X-b.X});
+  var fire=objs.filter(function(o){return o.k==='fire'})[0], tb=null;
+  if(fire){
+    var along=(s==='w'||s==='e')?(fire.x+fire.w/2):(fire.y+fire.h/2);
+    var fX=c.flip?(L-along):along;
+    var fy=(s==='w'||s==='e')?(fire.y+fire.h/2):(c.flip?(L-fX):fX);
+    var zr2=zRoofY(fy);
+    tb={X:fX,zr:zr2,tz:zr2+EX.tube};
+    ztop=Math.max(ztop,tb.tz+130);
+  }
+
+  /* земля */
+  g+='<line class="gnd" x1="'+(-E-900)+'" y1="0" x2="'+(L+E+900)+'" y2="0"/>';
+  for(var i=-E-800;i<L+E+900;i+=240) g+='<line class="gh" x1="'+i+'" y1="0" x2="'+(i-130)+'" y2="130"/>';
+
+  /* сваи */
+  var np=(L>4000)?4:2, pc=[];
+  for(var j=0;j<np;j++) pc.push(Math.round(240+j*(L-480)/(np-1)));
+  pc.forEach(function(x){
+    g+='<rect class="pile" x="'+(x-54)+'" y="'+(-EX.pile)+'" width="108" height="'+EX.pile+'"/>';
+    g+='<rect class="pile" x="'+(x-105)+'" y="'+(-EX.pile-45)+'" width="210" height="45"/>';
+  });
+
+  /* пол, стена, крыша */
+  g+='<rect class="fl" x="0" y="'+(-zf)+'" width="'+L+'" height="'+EX.fl+'"/>';
+  var wa=wallTop(s,0,L)-RT, wb=wallTop(s,L,L)-RT;
+  g+='<path class="wl" d="M 0 '+(-zf)+' L 0 '+(-wa)+' L '+L+' '+(-wb)+' L '+L+' '+(-zf)+' Z"/>';
+  g+='<path class="roof" d="M '+(-E)+' '+(-zl)+' L '+(L+E)+' '+(-zr)+' L '+(L+E)+' '+(-zr+RT)+' L '+(-E)+' '+(-zl+RT)+' Z"/>';
+
+  /* труба */
+  if(tb){
+    g+='<path class="flash" d="M '+(tb.X-300)+' '+(-tb.zr+80)+' L '+(tb.X-135)+' '+(-tb.zr-210)+' L '+(tb.X+135)+' '+(-tb.zr-210)+' L '+(tb.X+300)+' '+(-tb.zr+80)+' Z"/>';
+    g+='<rect class="tube" x="'+(tb.X-100)+'" y="'+(-tb.tz)+'" width="200" height="'+(tb.tz-tb.zr+150)+'"/>';
+    g+='<rect class="tube" x="'+(tb.X-175)+'" y="'+(-tb.tz-135)+'" width="350" height="135"/>';
+    var far=tb.X>L*0.55;
+    g+='<text class="'+(far?'cls cle':'cls')+'" x="'+(tb.X+(far?-320:320))+'" y="'+(-tb.tz+160)+'">труба сэндвич &#216;115/200, '+cm(EX.tube)+' см над кровлей, искрогаситель</text>';
+  }
+
+  /* проёмы */
+  ops.forEach(function(d){
+    var o=d.o, X=d.X, b=zf+ob(o), t=ot(o), W=d.len, mk=markOf(o);
+    g+='<g class="op '+o.k+'">';
+    g+='<rect x="'+X+'" y="'+(-(b+t))+'" width="'+W+'" height="'+t+'"/>';
+    if(o.k==='frame'){
+      var hs=Math.round(t*0.6), mx=X+W/2;
+      g+='<rect class="sash" x="'+X+'" y="'+(-(b+hs))+'" width="'+W+'" height="'+hs+'"/>';
+      g+='<path class="up" d="M '+mx+' '+(-(b+230))+' V '+(-(b+hs-230))+' M '+(mx-160)+' '+(-(b+hs-400))+' L '+mx+' '+(-(b+hs-230))+' L '+(mx+160)+' '+(-(b+hs-400))+'"/>';
+      g+='<text class="sz" x="'+mx+'" y="'+(-(b+90))+'">створка едет вверх</text>';
+    } else if(o.k==='door'){
+      g+='<line class="leafl" x1="'+(X+70)+'" y1="'+(-(b+t-70))+'" x2="'+(X+70)+'" y2="'+(-(b+70))+'"/>';
+      g+='<line class="leafl" x1="'+(X+W-70)+'" y1="'+(-(b+t-70))+'" x2="'+(X+W-70)+'" y2="'+(-(b+70))+'"/>';
+      g+='<circle class="knob" cx="'+(X+W-230)+'" cy="'+(-(b+1050))+'" r="55"/>';
+      g+='<text class="cl" x="'+(X+W/2)+'" y="'+(-(b+1500))+'">открывается наружу</text>';
+    } else {
+      var fix=(W>=1400)?900:0;
+      if(fix) g+='<line class="mul" x1="'+(X+fix)+'" y1="'+(-(b+t))+'" x2="'+(X+fix)+'" y2="'+(-b)+'"/>';
+      if(o.k==='frost'){ for(var q=0;q<4;q++){ var hx=X+W*(0.16+q*0.19), hy=b+t*0.22;
+        g+='<line class="hl" x1="'+hx+'" y1="'+(-hy)+'" x2="'+(hx+W*0.16)+'" y2="'+(-(hy+t*0.4))+'"/>' } }
+      else { var a0=X+fix+90, a1=X+W-90, ax=(a0+a1)/2;
+        g+='<path class="tilt" d="M '+a0+' '+(-(b+t-90))+' L '+ax+' '+(-(b+110))+' L '+a1+' '+(-(b+t-90))+'"/>' }
+    }
+    g+='</g>';
+    g+='<text class="mk" x="'+(X+W/2)+'" y="'+(-(b+t)-110)+'">'+mk+'</text>';
+    g+='<text class="cl" x="'+(X+W/2)+'" y="'+(-(b+t)-290)+'">'+cm(W)+'×'+cm(t)+' · низ '+cm(ob(o))+'</text>';
+  });
+
+  /* приточный клапан у печки — только если не попадает в проём */
+  if(tb){
+    var vx=null;
+    [-640,640,-1100,1100].forEach(function(dx){
+      if(vx!==null)return;
+      var t=tb.X+dx; if(t<200||t>L-200)return;
+      if(ops.some(function(d){ return t>d.X-760&&t<d.X+d.len+760 }))return;
+      vx=t;
+    });
+    if(vx!==null){
+      g+='<circle class="vent" cx="'+vx+'" cy="'+(-(zf+320))+'" r="95"/>';
+      g+='<text class="cls" x="'+(vx+180)+'" y="'+(-(zf+270))+'">приточный клапан &#216;125 у печки</text>';
+    }
+  }
+
+  /* терраса */
+  if(s==='w'&&EX.terr!=='no'){
+    var t0=0,t1=L, dr=ops.filter(function(d){return d.o.k==='door'})[0];
+    if(EX.terr==='door'){ if(dr){t0=Math.max(0,dr.X-700); t1=Math.min(L,dr.X+dr.len+700)} else {t0=0;t1=2200} }
+    g+='<line class="terr" x1="'+t0+'" y1="'+(-zf-30)+'" x2="'+t1+'" y2="'+(-zf-30)+'"/>';
+    g+='<line class="post" x1="'+(t0+90)+'" y1="'+(-zf-30)+'" x2="'+(t0+90)+'" y2="0"/>';
+    g+='<line class="post" x1="'+(t1-90)+'" y1="'+(-zf-30)+'" x2="'+(t1-90)+'" y2="0"/>';
+    g+='<text class="cls cle terrt" x="'+(t1-160)+'" y="'+(-zf-220)+'">терраса '+((t1-t0)/1000).toFixed(2).replace('.',',')+' м, настил в уровень с полом</text>';
+  }
+
+  /* крыльцо */
+  var dd=ops.filter(function(d){return d.o.k==='door'})[0];
+  if(dd){
+    var n=Math.ceil(zf/190), hh=zf/n, sw=Math.max(900,dd.len), cx2=dd.X+dd.len/2;
+    for(var q2=0;q2<n;q2++) g+='<rect class="step" x="'+(cx2-sw/2)+'" y="'+(-hh*(q2+1))+'" width="'+sw+'" height="'+hh+'"/>';
+    g+='<text class="cl" x="'+cx2+'" y="340">'+n+' ступени по '+cm(hh)+' см, ширина '+cm(sw)+' см</text>';
+  }
+
+  /* уровни справа */
+  function lvl(z,txt){
+    g+='<line class="lv" x1="'+(-E-150)+'" y1="'+(-z)+'" x2="'+(L+E+120)+'" y2="'+(-z)+'"/>';
+    g+='<text class="lvt" x="'+(L+E+220)+'" y="'+(-z+34)+'">'+txt+'</text>';
+  }
+  lvl(zc,'220 потолок');
+  lvl(zf+2050,'205 верх окон');
+  lvl(zf+1160,'116 матрас');
+  lvl(zf+1000,'100 подиум');
+  lvl(zf+880,'88 кухня');
+  lvl(zf+750,'75 стол');
+  lvl(zf,'0 чистый пол');
+  g+='<text class="lvt" x="'+(L+E+220)+'" y="'+(-EX.pile/2+34)+'">свая '+cm(EX.pile)+' см</text>';
+  g+='<text class="lvt" x="'+(L+E+220)+'" y="'+(-zrf+34)+'">крыша '+cm(zrf-zf)+' от пола</text>';
+
+  /* размеры */
+  var row=620, prev=0;
+  ops.forEach(function(d){
+    if(d.X-prev>180) g+=dim(prev,d.X,row,cm(d.X-prev));
+    g+=dim(d.X,d.X+d.len,row,cm(d.len));
+    prev=d.X+d.len;
+  });
+  if(L-prev>180) g+=dim(prev,L,row,cm(L-prev));
+  g+=dim(0,L,row+460,(L/1000).toFixed(2).replace('.',',')+' м');
+  g+=dim(-zf,0,-E-430,cm(zf),1);
+  g+=dim(-zc,-zf,-E-430,'220',1);
+  g+=dim(-zrf,0,-E-830,cm(zrf),1);
+
+  /* стороны света */
+  g+='<text class="end" x="'+(-E-500)+'" y="'+(-ztop-300)+'">&#8592; '+c.la.toUpperCase()+'</text>';
+  g+='<text class="end cle" x="'+(L+E+500)+'" y="'+(-ztop-300)+'">'+c.lb.toUpperCase()+' &#8594;</text>';
+
+  var x0=-(E+1500), w=L+2*E+1500+2400, y0=-(ztop+620), h=ztop+620+1320;
+  return '<figure class="fig"><figcaption>'+esc(c.t)+'</figcaption><p class="cap2">'+esc(c.sub)+'</p>'+
+    '<svg viewBox="'+x0+' '+y0+' '+w+' '+h+'" role="img" aria-label="Фасад: '+esc(c.t)+'">'+g+'</svg></figure>';
+}
+
+function drawElev(){
+  document.getElementById('elev').innerHTML=SIDES.map(facade).join('');
+}
+
+/* ---------- спецификация проёмов ---------- */
+
+var MARKS={
+ 'О-1':{n:'Окно с подъёмной нижней створкой',w:1200,t:1300,b:750,d:'Верх глухой, низ поднимается вверх. Подоконник на 75 см — продолжение столешницы.'},
+ 'О-2':{n:'Окно у кровати',w:1500,t:900,b:1150,d:'Глухая часть 90 см + откидная 60 см. Низ ровно по матрасу — поле видно лёжа.'},
+ 'О-3':{n:'Окно над кухней',w:900,t:1100,b:950,d:'Одна поворотно-откидная створка. Низ на 7 см выше столешницы кухни.'},
+ 'О-4':{n:'Окно в санузел, матовое',w:500,t:600,b:1450,d:'Матовое стекло, откидная створка внутрь. Низ выше головы сидящего.'},
+ 'Д-1':{n:'Входная дверь',w:900,t:2050,b:0,d:'Открывается наружу. Стальной утеплённый блок 800×2000 в проём 900×2050.'},
+ 'Д-2':{n:'Раздвижная внутренняя',w:700,t:1950,b:0,d:'Полотно 800×2000 едет по рельсу над проёмом, верх рельса 207 см от пола.'}
+};
+var WALLN={w:'запад (поле)',e:'восток',n:'север (торец)',s:'юг (торец)'};
+
+function wallOf(o){
+  if(o.k==='slide')return 'внутри';
+  if(o.y<=-60)return WALLN.w;
+  if(o.y>=BOXH-60)return WALLN.e;
+  if(o.x<=-60)return WALLN.n;
+  if(o.x>=BOXW-60)return WALLN.s;
+  return 'внутри';
+}
+
+function drawSpec(){
+  var rows={}, order=['О-1','О-2','О-3','О-4','Д-1','Д-2'];
+  objs.forEach(function(o){
+    if(!ODEF[o.k])return;
+    var m=markOf(o); if(!m)return;
+    var len=Math.max(o.w,o.h), key=m+'|'+len+'|'+ot(o)+'|'+ob(o)+'|'+wallOf(o);
+    if(!rows[key]) rows[key]={m:m,w:len,t:ot(o),b:ob(o),wall:wallOf(o),n:0};
+    rows[key].n++;
+  });
+  var list=Object.keys(rows).map(function(k){return rows[k]}).sort(function(a,b){
+    return order.indexOf(a.m)-order.indexOf(b.m) || a.wall.localeCompare(b.wall);
+  });
+  var tot=0;
+  var h='<h2>Окна и двери — что заказывать</h2>'+
+   '<p class="lede">Считается по тому, что сейчас стоит на плане. Все размеры — <b>проём в каркасе</b>, в миллиметрах: рама заказывается на 30–40 мм меньше по каждой стороне, остальное уходит в монтажный зазор и пену. Верх всех окон на одной линии — 2050 мм от чистого пола.</p>'+
+   '<table><thead><tr><th>Марка</th><th>Что это</th><th>Проём Ш×В</th><th>Низ от пола</th><th>Верх от пола</th><th>Стена</th><th>Шт.</th></tr></thead><tbody>';
+  list.forEach(function(r){
+    var M=MARKS[r.m]||{n:'проём',d:''};
+    tot+=r.n;
+    h+='<tr><td class="mk">'+r.m+'</td><td>'+esc(M.n)+'<br><span style="color:var(--ink2);font-size:13px">'+esc(M.d)+'</span></td>'+
+       '<td class="n">'+r.w+' × '+r.t+'</td><td class="n">'+r.b+'</td><td class="n">'+(r.b+r.t)+'</td>'+
+       '<td>'+esc(r.wall)+'</td><td class="n">'+r.n+'</td></tr>';
+  });
+  h+='</tbody></table><p class="lede">Всего проёмов на плане: '+tot+'. Площадь остекления — '+
+     (list.reduce(function(a,r){return a+(r.m.charAt(0)==='О'?r.w*r.t*r.n/1e6:0)},0)).toFixed(2).replace('.',',')+' м². '+
+     'Это около трети всех теплопотерь, поэтому на О-1 и О-2 просите двухкамерный стеклопакет 4-16-4-16-4, на остальные хватит однокамерного энергосберегающего.</p>';
+
+  h+='<h2>Высоты мебели — от них считаются окна</h2>'+
+   '<p class="lede">Два стула на всю бытовку. Значит обе столешницы одной высоты, а под подиумом кровати стулья должны проезжать целиком.</p>'+
+   '<table><thead><tr><th>Что</th><th>Высота от пола</th><th>Почему именно так</th></tr></thead><tbody>'+
+   '<tr><td>Стол обеденный и рабочее место</td><td class="n">750</td><td class="d">Одинаковые, чтобы два стула работали за любым. Столешница 30–40 мм, глубина 600. Снизу чисто до 680 мм: ни ящиков, ни царги, ни фартука — иначе стул не заедет.</td></tr>'+
+   '<tr><td>Подоконник О-1</td><td class="n">750</td><td class="d">Совпадает со столешницей: подоконная доска продолжает стол, шва по высоте нет.</td></tr>'+
+   '<tr><td>Кухонная столешница</td><td class="n">880</td><td class="d">Компромисс на двоих. Правило: свой рост пополам плюс 5 см, или высота локтя минус 15 см — проверьте по себе, разница в 2–3 см ощутима.</td></tr>'+
+   '<tr><td>Подиум кровати, верх настила</td><td class="n">1000</td><td class="d">Главный размер. Настил 120 мм (лаги 40×100 + плита 18 мм) даёт под подиумом чистые 880 мм.</td></tr>'+
+   '<tr><td>Проём под подиумом</td><td class="n">880</td><td class="d">Стиральная машина 850 заезжает с запасом, стул высотой до 850 задвигается целиком, ящики полной высоты.</td></tr>'+
+   '<tr><td>Ниша под стулья в подиуме</td><td class="n">880 × 1100 × 550</td><td class="d">Высота × ширина × глубина. Два стула рядом: 45+45 см плюс зазоры.</td></tr>'+
+   '<tr><td>Матрас, спальная поверхность</td><td class="n">1160</td><td class="d">Подиум 1000 + матрас 160. До потолка остаётся 1040 — сидеть в кровати можно в полный рост корпуса.</td></tr>'+
+   '<tr><td>Ступень-банкетка к кровати</td><td class="n">500</td><td class="d">Одна широкая ступень 500 × 400: и подняться, и сесть обуться, и ящик внутрь.</td></tr>'+
+   '<tr><td>Стулья, два штуки</td><td class="n">450 / до 850</td><td class="d">Сиденье 450, общая высота не больше 850, ширина до 450, глубина до 500, без подлокотников. Это условие, при котором стул и под стол заедет, и под подиум уйдёт.</td></tr>'+
+   '</tbody></table>';
+
+  h+='<h2>Что ещё сказать строителям</h2><ul class="pts">'+
+   '<li><b>Верх окон 2050, потолок 2200.</b> Над окнами остаётся 150 мм на перемычку и карниз. Над входной дверью (проём 2050) остаётся только верхняя обвязка — предупредите заранее, чтобы заложили перемычку, а не упёрлись в обвязку по факту.</li>'+
+   '<li><b>Шаг каркаса 600 мм.</b> Окна 1200 и 900 ложатся в шаг без переделок, О-2 шириной 1500 потребует дополнительной стойки — это нормально, но скажите сразу.</li>'+
+   '<li><b>О-1 — не обычная створка.</b> Нижняя половина поднимается вверх: либо подъёмная створка гильотинного типа, либо створка с подвесом сверху, откидывающаяся наружу-вверх. Проём один и тот же, разница только в фурнитуре — попросите показать, что они умеют, прежде чем заказывать.</li>'+
+   '<li><b>Раздвижные двери.</b> Проём 700, полотно 800, и рядом с проёмом нужен свободный простенок шириной не меньше 850 мм, куда полотно уезжает. На плане это видно — проверьте, что туда не встаёт мебель.</li>'+
+   '<li><b>Сваи.</b> '+cm(EX.pile)+' см над землёй, оголовок под обвязку, шаг не больше 2 м — по длинной стене четыре сваи, итого восемь. Высоту уточните по уровню участка.</li>'+
+   '<li><b>Труба.</b> Сэндвич Ø115/200 через кровлю, проходной узел с фартуком, '+cm(EX.tube)+' см над кровлей и искрогаситель. Рядом приточный клапан Ø125 на высоте 30 см от пола — без него печка будет тянуть воздух из санузла.</li>'+
+   '<li><b>Крыша односкатная с уклоном на восток</b> — чтобы вода и снег не шли на террасу и на входную дверь. Свесы 300 мм.</li>'+
+   '</ul>';
+  document.getElementById('spec').innerHTML=h;
+}
+
+/* ---------- переключение вкладок ---------- */
+
+var view='plan';
+function setView(v){
+  view=v;
+  ['plan','elev','spec'].forEach(function(k){
+    document.getElementById('v-'+k).hidden=(k!==v);
+    document.getElementById('t-'+k).className=(k===v)?'on':'';
+  });
+  document.getElementById('bar-plan').hidden=(v!=='plan');
+  if(v==='elev')drawElev();
+  if(v==='spec')drawSpec();
+}
+['plan','elev','spec'].forEach(function(k){
+  document.getElementById('t-'+k).onclick=function(){setView(k)};
+});
+[['e-pile','pile'],['e-fl','fl'],['e-rise','rise'],['e-tube','tube']].forEach(function(p){
+  var el=document.getElementById(p[0]);
+  el.onchange=function(){ var v=parseFloat(el.value.replace(',','.')); if(isNaN(v))return; EX[p[1]]=Math.max(0,v*10); drawElev() };
+});
+document.getElementById('e-terr').onchange=function(){ EX.terr=this.value; drawElev() };
+
+var st=load();
+if(st&&st.length){ objs=st.map(function(o){o.id=uid++;return o}); draw() } else setPreset(0);
+setView('plan');
+</script>
+
+<style>
+svg#plan .box{fill:var(--wall)}
+svg#plan .obj rect{fill:var(--fix);stroke:var(--wall);stroke-width:12;pointer-events:all}
+svg#plan .obj rect.hit{fill:transparent;stroke:none}
+svg#plan .obj.zone rect{fill:var(--zone);stroke:var(--rule)}
+svg#plan .obj.wall rect{fill:var(--wall);stroke:none}
+svg#plan .obj.fire rect{fill:var(--fire);stroke:none}
+svg#plan .obj.plate rect{fill:none;stroke:var(--fire);stroke-width:12;stroke-dasharray:70 45}
+svg#plan .obj.dash rect{fill:none;stroke:var(--ink2);stroke-width:12;stroke-dasharray:55 40}
+svg#plan .obj.win rect{fill:var(--glass);stroke:none}
+svg#plan .obj.frost rect{fill:var(--glass);opacity:.45;stroke:none}
+svg#plan .obj.frame rect{fill:var(--fire);stroke:none}
+svg#plan .obj.slide rect{fill:var(--paper);stroke:var(--rule);stroke-width:8}
+svg#plan .obj.door rect{fill:var(--paper);stroke:var(--rule);stroke-width:8}
+svg#plan .leaf{fill:var(--ink2);opacity:.6;stroke:none}
+svg#plan .arc{fill:none;stroke:var(--ink2);stroke-width:8;stroke-dasharray:45 35}
+svg#plan .mark{fill:none;stroke:var(--ink2);stroke-width:12}
+svg#plan .back{fill:none;stroke:var(--ink2);stroke-width:26}
+svg#plan .obj{cursor:move}
+svg#plan .obj.on rect{stroke:var(--sel);stroke-width:18}
+svg#plan .obj.on .mark,svg#plan .obj.on .back{stroke:var(--sel)}
+svg#plan .selbox{fill:none;stroke:var(--sel);stroke-width:8;stroke-dasharray:60 50}
+svg#plan .grip{fill:var(--sel);opacity:.85;cursor:nwse-resize}
+svg#plan text{font-family:Oswald,sans-serif;fill:var(--ink);text-anchor:middle;pointer-events:none}
+svg#plan .lb{font-size:115px}
+svg#plan .sz{font-family:'IBM Plex Mono',monospace;font-size:88px;fill:var(--ink2)}
+svg#plan .obj.on .sz{fill:var(--sel)}
+svg#plan .obj.fire .sz{fill:var(--paper)}
+svg#plan .dm{font-family:'IBM Plex Mono',monospace;font-size:108px;fill:var(--ink2)}
+svg#plan .dm.hi{fill:var(--sel);font-size:120px}
+svg#plan .dl{stroke:var(--ink2);stroke-width:7}
+svg#plan .cmp{font-family:'IBM Plex Mono',monospace;font-size:105px;fill:var(--ink2);letter-spacing:9px}
+svg#plan .fld{fill:var(--field);font-size:120px}
+svg#plan .fldline{stroke:var(--field);stroke-width:9}
+svg#plan .omk{font-family:Oswald,sans-serif;font-size:105px;fill:var(--glass)}
+svg#plan .obj.frame rect{fill:var(--fire)}
+</style>
