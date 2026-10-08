@@ -1,0 +1,305 @@
+<!doctype html><meta charset="utf-8">
+<title>Каркас бытовки в Ладово</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Spectral:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F3F5F1; --card:#FBFCFA; --ink:#1C241F; --ink2:#4B564E;
+  --rule:#CDD4C8; --wall:#2A332C; --inn:#E8ECE4; --fix:#DDE3D8;
+  --field:#4A7A52; --glass:#2F7183; --fire:#B96D22;
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+  --paper:#13170F; --card:#1A1F19; --ink:#E9EEE5; --ink2:#A3AE9E;
+  --rule:#2F382F; --wall:#D5DCD2; --inn:#1F261F; --fix:#2A322A;
+  --field:#84B388; --glass:#6FB4C4; --fire:#E29C50;
+}}
+:root[data-theme="dark"]{
+  --paper:#13170F; --card:#1A1F19; --ink:#E9EEE5; --ink2:#A3AE9E;
+  --rule:#2F382F; --wall:#D5DCD2; --inn:#1F261F; --fix:#2A322A;
+  --field:#84B388; --glass:#6FB4C4; --fire:#E29C50;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:Spectral,Georgia,serif;font-size:16px;line-height:1.6;margin:0}
+.wrap{max-width:920px;margin:0 auto;padding:34px 18px 80px}
+.eyebrow{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:var(--field);margin:0 0 9px}
+h1{font-family:Oswald,Impact,sans-serif;font-weight:600;font-size:clamp(27px,5.4vw,40px);margin:0 0 12px;line-height:1.05;text-wrap:balance}
+p.lede{color:var(--ink2);margin:0 0 6px;max-width:68ch}
+p.lede a{color:var(--field)}
+.scope{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;margin:24px 0 8px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:14px 0}
+.scope h3{font-family:Oswald,sans-serif;font-weight:500;font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink2);margin:0 0 6px}
+.scope p{margin:0;font-size:15px}
+.scope div:first-child p{color:var(--ink)}
+.scope div:last-child p{color:var(--ink2)}
+@media (max-width:620px){.scope{grid-template-columns:1fr;gap:16px}}
+h2{font-family:Oswald,sans-serif;font-weight:500;font-size:13px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink2);margin:38px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--rule)}
+figure{margin:0 0 10px;overflow-x:auto}
+figure svg{display:block;width:100%;min-width:560px;height:auto}
+figcaption{font-family:Oswald,sans-serif;font-weight:500;font-size:16px;margin:0 0 2px}
+.cap2{color:var(--ink2);font-size:14px;margin:0 0 10px;max-width:68ch}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:4px 0}
+th,td{text-align:left;padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:Oswald,sans-serif;font-weight:500;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink2);white-space:nowrap}
+td.n{font-family:'IBM Plex Mono',monospace;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.mk{font-family:Oswald,sans-serif;font-size:16px;white-space:nowrap}
+ul{font-size:15px;padding-left:20px;max-width:72ch;margin:8px 0}
+li{margin-bottom:7px}
+li b{font-weight:600}
+ul.q{color:var(--ink2)}
+.foot{color:var(--ink2);font-size:14px;margin-top:34px;border-top:1px solid var(--rule);padding-top:14px}
+
+svg text{font-family:Oswald,sans-serif;fill:var(--ink);text-anchor:middle}
+.inn{fill:var(--inn)}
+.wl{fill:var(--wall)}
+.op{fill:var(--card);stroke:var(--wall);stroke-width:14}
+.gl{stroke:var(--glass);stroke-width:22}
+.dr{fill:var(--fix);stroke:var(--wall);stroke-width:14}
+.wlo{fill:var(--card);stroke:var(--wall);stroke-width:30}
+.opf{fill:var(--glass);fill-opacity:.15;stroke:var(--wall);stroke-width:22}
+.drf{fill:var(--ink2);fill-opacity:.12;stroke:var(--wall);stroke-width:22}
+.leaf{stroke:var(--ink2);stroke-width:18}
+.arc{fill:none;stroke:var(--ink2);stroke-width:12;stroke-dasharray:90 60}
+.pipe{fill:none;stroke:var(--fire);stroke-width:22;stroke-dasharray:70 50}
+.cross{stroke:var(--fire);stroke-width:14}
+.fl{stroke:var(--wall);stroke-width:26}
+.dash{stroke:var(--ink2);stroke-width:10;stroke-dasharray:90 60}
+.roof{fill:var(--wall)}
+.hatch{stroke:var(--glass);stroke-width:12;opacity:.7}
+.dl{stroke:var(--ink2);stroke-width:10}
+.sb{stroke:var(--ink);stroke-width:12}
+.sbf{fill:var(--ink)}
+svg .dm{font-family:'IBM Plex Mono',monospace;fill:var(--ink2);font-variant-numeric:tabular-nums}
+svg .mk{font-family:Oswald,sans-serif;font-weight:600;fill:var(--ink)}
+svg .cl{fill:var(--ink2)}
+svg .cls{fill:var(--ink2);text-anchor:start}
+svg .cle{text-anchor:end}
+svg .end{fill:var(--field);letter-spacing:8px}
+svg .fire{fill:var(--fire);text-anchor:start}
+svg.wide .dm{font-size:150px} svg.wide .mk{font-size:215px} svg.wide .cl,svg.wide .cls{font-size:140px} svg.wide .end{font-size:160px} svg.wide .fire{font-size:140px}
+svg.narrow .dm{font-size:105px} svg.narrow .mk{font-size:150px} svg.narrow .cl,svg.narrow .cls{font-size:98px} svg.narrow .end{font-size:112px} svg.narrow .fire{font-size:98px}
+@media print{body{background:#fff}.wrap{padding:0;max-width:none}figure{break-inside:avoid}}
+</style>
+
+<div class="wrap">
+<p class="eyebrow">Чертёж для строительной компании · все размеры в мм</p>
+<h1>Каркас бытовки в Ладово</h1>
+<p class="lede">Коробка 3 × 7 м внутри, потолок 2200, крыша односкатная с уклоном на восток. Здесь только то, что нужно вам: стены, проёмы под окна и дверь, отверстие под печную трубу и привязки. Внутренние перегородки, мебель и отделку делаем сами, поэтому их на чертеже нет.</p>
+<p class="lede">Полный комплект с планировкой — <a href="https://dolinova-m.github.io/bytovka/">dolinova-m.github.io/bytovka</a></p>
+
+<div class="scope">
+  <div><h3>Ваша работа</h3><p>Каркас с полом и обвязкой, кровля со свесами, отверстие под трубу, окна О-1 … О-3 и входная дверь Д-1.</p></div>
+  <div><h3>Наша работа</h3><p>Внутренние перегородки, подиум, мебель, кухня и санузел, электрика и вода внутри, печка.</p></div>
+</div>
+
+<h2>План</h2>
+<figure>
+  <figcaption>План каркаса — вид сверху</figcaption>
+  <p class="cap2">Запад (поле и закат) сверху. Привязки окон и двери — от внутренних поверхностей стен. Восточная и южная стены глухие.</p>
+  <div id="f-plan"></div>
+</figure>
+
+<h2>Фасады</h2>
+<figure>
+  <figcaption>Западный фасад</figcaption>
+  <p class="cap2">Длинная стена 7 м, высокая сторона крыши. Верх всех окон на одной линии — 2050 от чистого пола.</p>
+  <div id="f-west"></div>
+</figure>
+<figure>
+  <figcaption>Северный фасад</figcaption>
+  <p class="cap2">Короткая стена 3 м, здесь виден уклон крыши. Единственное окно — матовое О-3.</p>
+  <div id="f-north"></div>
+</figure>
+
+<h2>Проёмы</h2>
+<table>
+<thead><tr><th>Марка</th><th>Стена</th><th>Проём Ш×В</th><th>Низ</th><th>Что это</th></tr></thead>
+<tbody>
+<tr><td class="mk">О-1</td><td>запад</td><td class="n">2450 × 1300</td><td class="n">750</td><td>Длинное окно. Верх глухой, низ — две створки на верхнем подвесе, откидываются наружу козырьками. Нужны газовые упоры или ножничные фиксаторы</td></tr>
+<tr><td class="mk">О-2</td><td>запад</td><td class="n">1500 × 1370</td><td class="n">680</td><td>Две створки без средней стойки (штульп), поворотно-откидные внутрь</td></tr>
+<tr><td class="mk">О-3</td><td>север</td><td class="n">500 × 600</td><td class="n">1450</td><td>Матовое, откидное внутрь</td></tr>
+<tr><td class="mk">Д-1</td><td>запад</td><td class="n">900 × 2050</td><td class="n">0</td><td>Входная дверь, открывается наружу</td></tr>
+</tbody>
+</table>
+
+<h2>Что знать по размерам</h2>
+<ul>
+<li><b>3 × 7 м — это чисто внутри:</b> 7000 × 3000. По каркасу при стене 120 мм получается 7240 × 3240. Если стена выйдет толще, внутренние размеры остаются, габарит растёт.</li>
+<li><b>Все отметки по высоте — от чистого пола.</b> Потолок 2200, верх окон 2050, верх западной стены 2900, восточной 2450.</li>
+<li><b>Крыша односкатная на восток:</b> уклон 450 мм на 3 м (≈ 8,5°), свесы 300 мм по всему периметру — вода не идёт ни на вход, ни на террасу.</li>
+<li><b>Отверстие под трубу Ø200</b> в кровле и в перекрытии: ось 1400 от северной стены и 700 от западной. Труба сэндвич Ø115/200. Ось привязана к печке — подтвердим до монтажа кровли.</li>
+<li><b>Рамы заказывать на 30–40 мм меньше проёма</b> по каждой стороне. На О-1 и О-2 — двухкамерный стеклопакет.</li>
+</ul>
+
+<h2>Уточнить до начала</h2>
+<ul class="q">
+<li>Толщина стены и утеплитель — от этого зависит наружный габарит.</li>
+<li>Высота пола над землёй и фундамент: входят ли сваи в вашу работу.</li>
+<li>Простенок между О-1 и О-2 — 500 мм. Если для стоек нужно больше, сдвигаем О-2 к южному углу, там запас 550.</li>
+<li>Нужен ли приточный клапан Ø125 в стене у печки — если да, сверлите сразу, место покажем.</li>
+</ul>
+
+<p class="foot">Чертёж собран из рабочей планировки, поэтому размеры проёмов привязаны к мебели: подоконник О-1 совпадает со столешницей, низ О-2 — с матрасом. Эти привязки менять не хочется, а положение окон по стене подвинуть можно.</p>
+</div>
+
+<script>
+var L=7000, D=3000, T=120;                 /* чисто внутри и толщина стены */
+var ZC=2200, ZW=2900, ZE=2450, OV=300, RT=100, TW=2050;
+var WOPS=[
+ {m:'Д-1',a:200, w:900, b:0,   h:2050, k:'door'},
+ {m:'О-1',a:2000,w:2450,b:750, h:1300, k:'frame'},
+ {m:'О-2',a:4950,w:1500,b:680, h:1370, k:'win'}
+];
+var NOPS=[{m:'О-3',a:2200,w:500,b:1450,h:600,k:'frost'}];   /* a — от западной стены */
+var PX=1400, PY=700, PD=200;
+
+function tk(p,at,hz){ return hz
+  ? '<line class="dl" x1="'+p+'" y1="'+(at-80)+'" x2="'+p+'" y2="'+(at+80)+'"/>'
+  : '<line class="dl" x1="'+(at-80)+'" y1="'+p+'" x2="'+(at+80)+'" y2="'+p+'"/>' }
+function dh(a,b,y,t){ return '<line class="dl" x1="'+a+'" y1="'+y+'" x2="'+b+'" y2="'+y+'"/>'+tk(a,y,1)+tk(b,y,1)+
+  '<text class="dm" x="'+((a+b)/2)+'" y="'+(y-70)+'">'+t+'</text>' }
+function dv(a,b,x,t){ var m=(a+b)/2; return '<line class="dl" x1="'+x+'" y1="'+a+'" x2="'+x+'" y2="'+b+'"/>'+tk(a,x,0)+tk(b,x,0)+
+  '<text class="dm" x="'+x+'" y="'+m+'" transform="rotate(-90 '+x+' '+m+')" dy="-70">'+t+'</text>' }
+function chain(list,len,at,vert){
+  var s='', prev=0;
+  list.forEach(function(o){
+    if(o.a-prev>60) s+= vert?dv(prev,o.a,at,o.a-prev):dh(prev,o.a,at,o.a-prev);
+    s+= vert?dv(o.a,o.a+o.w,at,o.w):dh(o.a,o.a+o.w,at,o.w);
+    prev=o.a+o.w;
+  });
+  if(len-prev>60) s+= vert?dv(prev,len,at,len-prev):dh(prev,len,at,len-prev);
+  return s;
+}
+
+/* ---------- план ---------- */
+function plan(){
+  var g='';
+  g+='<rect class="inn" x="0" y="0" width="'+L+'" height="'+D+'"/>';
+  g+='<rect class="wl" x="'+(-T)+'" y="'+(-T)+'" width="'+(L+2*T)+'" height="'+T+'"/>';
+  g+='<rect class="wl" x="'+(-T)+'" y="'+D+'" width="'+(L+2*T)+'" height="'+T+'"/>';
+  g+='<rect class="wl" x="'+(-T)+'" y="0" width="'+T+'" height="'+D+'"/>';
+  g+='<rect class="wl" x="'+L+'" y="0" width="'+T+'" height="'+D+'"/>';
+
+  WOPS.forEach(function(o){
+    if(o.k==='door'){
+      g+='<rect class="dr" x="'+o.a+'" y="'+(-T)+'" width="'+o.w+'" height="'+T+'"/>';
+      g+='<line class="leaf" x1="'+o.a+'" y1="'+(-T)+'" x2="'+o.a+'" y2="'+(-T-o.w)+'"/>';
+      g+='<path class="arc" d="M '+o.a+' '+(-T-o.w)+' A '+o.w+' '+o.w+' 0 0 1 '+(o.a+o.w)+' '+(-T)+'"/>';
+      g+='<text class="cls" x="'+(o.a+o.w+320)+'" y="'+(-T-520)+'">открывается наружу</text>';
+    } else {
+      g+='<rect class="op" x="'+o.a+'" y="'+(-T)+'" width="'+o.w+'" height="'+T+'"/>';
+      g+='<line class="gl" x1="'+o.a+'" y1="'+(-T/2)+'" x2="'+(o.a+o.w)+'" y2="'+(-T/2)+'"/>';
+    }
+    g+='<text class="mk" x="'+(o.a+o.w/2)+'" y="340">'+o.m+'</text>';
+  });
+  NOPS.forEach(function(o){
+    g+='<rect class="op" x="'+(-T)+'" y="'+o.a+'" width="'+T+'" height="'+o.w+'"/>';
+    g+='<line class="gl" x1="'+(-T/2)+'" y1="'+o.a+'" x2="'+(-T/2)+'" y2="'+(o.a+o.w)+'"/>';
+    g+='<text class="mk" x="340" y="'+(o.a+o.w/2)+'" transform="rotate(-90 340 '+(o.a+o.w/2)+')">'+o.m+'</text>';
+  });
+
+  /* отверстие под трубу */
+  g+='<circle class="pipe" cx="'+PX+'" cy="'+PY+'" r="'+(PD/2)+'"/>';
+  g+='<line class="cross" x1="'+(PX-320)+'" y1="'+PY+'" x2="'+(PX+320)+'" y2="'+PY+'"/>';
+  g+='<line class="cross" x1="'+PX+'" y1="'+(PY-320)+'" x2="'+PX+'" y2="'+(PY+320)+'"/>';
+  g+='<text class="fire" x="'+(PX+420)+'" y="'+(PY+60)+'">&#216;200 под трубу</text>';
+  g+=dh(0,PX,PY+900,PX);
+  g+=dv(0,PY,PX+1000,PY);
+
+  /* размеры */
+  g+='<g>'+chain(WOPS,L,-1300)+'</g>';
+  g+=dh(0,L,-1900,L+' чисто &#183; '+(L+2*T)+' по каркасу');
+  g+='<g>'+chain(NOPS,D,-1300,1)+'</g>';
+  g+=dv(0,D,-1900,D+' чисто &#183; '+(D+2*T)+' по каркасу');
+
+  /* стороны света */
+  g+='<text class="end" x="'+(L/2)+'" y="-2400">&#9650; ЗАПАД &#183; ПОЛЕ И ЗАКАТ</text>';
+  g+='<text class="end" x="'+(L/2)+'" y="3700">ВОСТОК &#183; ПОДХОД</text>';
+  g+='<text class="cl" x="'+(L/2)+'" y="'+(D-300)+'">восточная стена глухая</text>';
+  g+='<text class="end" x="-2500" y="'+(D/2)+'" transform="rotate(-90 -2500 '+(D/2)+')">СЕВЕР</text>';
+  g+='<text class="end" x="7700" y="'+(D/2)+'" transform="rotate(-90 7700 '+(D/2)+')">ЮГ</text>';
+  g+='<text class="cl" x="'+(L-300)+'" y="'+(D/2)+'" transform="rotate(-90 '+(L-300)+' '+(D/2)+')">южная стена глухая</text>';
+
+  /* масштабная линейка */
+  var sy=4280;
+  for(var i=0;i<3;i++){
+    g+='<rect class="'+(i%2?'sbf':'')+'" x="'+(i*1000)+'" y="'+sy+'" width="1000" height="90" fill="'+(i%2?'':'none')+'" stroke="var(--ink)" stroke-width="12"/>';
+    g+='<text class="dm" x="'+(i*1000)+'" y="'+(sy+310)+'">'+i+'</text>';
+  }
+  g+='<text class="dm" x="3000" y="'+(sy+310)+'">3 м</text>';
+
+  return '<svg class="wide" viewBox="-2900 -2800 10900 7500" role="img" aria-label="План каркаса бытовки 3 на 7 метров">'+g+'</svg>';
+}
+
+/* ---------- западный фасад ---------- */
+function west(){
+  var g='', x0=-T-OV, x1=L+T+OV;
+  g+='<rect class="roof" x="'+x0+'" y="'+(-(ZW+RT))+'" width="'+(x1-x0)+'" height="'+RT+'"/>';
+  g+='<rect class="wlo" x="'+(-T)+'" y="'+(-ZW)+'" width="'+(L+2*T)+'" height="'+ZW+'"/>';
+  g+='<line class="fl" x1="'+(x0-200)+'" y1="0" x2="'+(x1+200)+'" y2="0"/>';
+  g+='<line class="dash" x1="'+(-T)+'" y1="'+(-ZC)+'" x2="'+(L+T)+'" y2="'+(-ZC)+'"/>';
+
+  WOPS.forEach(function(o){
+    var top=-(o.b+o.h);
+    g+='<rect class="'+(o.k==='door'?'drf':'opf')+'" x="'+o.a+'" y="'+top+'" width="'+o.w+'" height="'+o.h+'"/>';
+    if(o.k==='frame'){
+      var hs=780, mx=o.a+o.w/2;
+      g+='<line class="gl" x1="'+o.a+'" y1="'+(-(o.b+hs))+'" x2="'+(o.a+o.w)+'" y2="'+(-(o.b+hs))+'"/>';
+      g+='<line class="gl" x1="'+mx+'" y1="'+(-(o.b+hs))+'" x2="'+mx+'" y2="'+(-o.b)+'"/>';
+      g+='<text class="cl" x="'+mx+'" y="'+(-(o.b+hs)-150)+'">верх глухой</text>';
+      g+='<text class="cl" x="'+mx+'" y="'+(-o.b-260)+'">две створки-козырька наружу</text>';
+    }
+    if(o.k==='win'){
+      g+='<line class="gl" x1="'+(o.a+o.w/2)+'" y1="'+top+'" x2="'+(o.a+o.w/2)+'" y2="'+(-o.b)+'"/>';
+      g+='<text class="cl" x="'+(o.a+o.w/2)+'" y="'+(-o.b-260)+'">внутрь, без средней стойки</text>';
+    }
+    if(o.k==='door'){
+      g+='<line class="leaf" x1="'+(o.a+90)+'" y1="'+(top+90)+'" x2="'+(o.a+90)+'" y2="-90"/>';
+      g+='<circle fill="var(--ink2)" cx="'+(o.a+o.w-230)+'" cy="-1050" r="55"/>';
+    }
+    g+='<text class="mk" x="'+(o.a+o.w/2)+'" y="'+(top-300)+'">'+o.m+'</text>';
+    g+='<text class="cl" x="'+(o.a+o.w/2)+'" y="'+(top-530)+'">'+o.w+' &#215; '+o.h+' &#183; низ '+o.b+'</text>';
+  });
+
+  g+='<g>'+chain(WOPS,L,700)+'</g>';
+  g+=dv(-TW,0,-900,TW+' верх окон');
+  g+=dv(-ZC,0,-1550,ZC+' потолок');
+  g+=dv(-ZW,0,-2200,ZW+' верх стены');
+  g+='<text class="cls" x="'+(x1+150)+'" y="'+(-(ZW+RT)-120)+'">свес 300</text>';
+  g+='<text class="end" x="'+(-T)+'" y="'+(-(ZW+RT)-500)+'" text-anchor="start">&#8592; СЕВЕР</text>';
+  g+='<text class="end cle" x="'+(L+T)+'" y="'+(-(ZW+RT)-500)+'">ЮГ &#8594;</text>';
+  g+='<text class="cl" x="'+(L/2)+'" y="1500">чистый пол — нулевая отметка</text>';
+  return '<svg class="wide" viewBox="-2800 -3900 10900 5700" role="img" aria-label="Западный фасад бытовки">'+g+'</svg>';
+}
+
+/* ---------- северный фасад: слева восток, справа запад ---------- */
+function north(){
+  var g='', u0=-T-OV, u1=D+T+OV;
+  function hh(u){ return ZE + (ZW-ZE)*u/D }
+  g+='<path class="roof" d="M '+u0+' '+(-(hh(u0)+RT))+' L '+u1+' '+(-(hh(u1)+RT))+' L '+u1+' '+(-hh(u1))+' L '+u0+' '+(-hh(u0))+' Z"/>';
+  g+='<path class="wlo" d="M '+(-T)+' 0 L '+(-T)+' '+(-hh(-T))+' L '+(D+T)+' '+(-hh(D+T))+' L '+(D+T)+' 0 Z"/>';
+  g+='<line class="fl" x1="'+(u0-200)+'" y1="0" x2="'+(u1+200)+'" y2="0"/>';
+  g+='<line class="dash" x1="'+(-T)+'" y1="'+(-ZC)+'" x2="'+(D+T)+'" y2="'+(-ZC)+'"/>';
+
+  NOPS.forEach(function(o){
+    var a=D-o.a-o.w, top=-(o.b+o.h);        /* на фасаде считаем от восточного угла */
+    g+='<rect class="opf" x="'+a+'" y="'+top+'" width="'+o.w+'" height="'+o.h+'"/>';
+    for(var q=0;q<3;q++){ var hx=a+o.w*(0.18+q*0.26);
+      g+='<line class="hatch" x1="'+hx+'" y1="'+(-o.b-80)+'" x2="'+(hx+o.w*0.2)+'" y2="'+(top+80)+'"/>' }
+    g+='<text class="mk" x="'+(a+o.w/2)+'" y="'+(-o.b+340)+'">'+o.m+'</text>';
+    g+='<text class="cl" x="'+(a+o.w/2)+'" y="'+(-o.b+570)+'">'+o.w+' &#215; '+o.h+' &#183; низ '+o.b+'</text>';
+    g+='<g>'+chain([{a:a,w:o.w}],D,700)+'</g>';
+  });
+
+  g+=dh(0,D,1350,D+' чисто &#183; '+(D+2*T)+' по каркасу');
+  g+=dv(-ZC,0,-800,ZC+' потолок');
+  g+=dv(-ZE,0,-1450,ZE+' восток');
+  g+=dv(-ZW,0,3900,ZW+' запад');
+  g+='<text class="cl" x="'+(D/2)+'" y="'+(-(hh(D/2)+RT)-200)+'">уклон 450 на 3000, на восток</text>';
+  g+='<text class="end" x="'+(-T)+'" y="'+(-(ZW+RT)-500)+'" text-anchor="start">&#8592; ВОСТОК</text>';
+  g+='<text class="end cle" x="'+(D+T)+'" y="'+(-(ZW+RT)-500)+'">ЗАПАД &#8594;</text>';
+  return '<svg class="narrow" viewBox="-2300 -3900 7700 5700" role="img" aria-label="Северный фасад бытовки">'+g+'</svg>';
+}
+
+document.getElementById('f-plan').innerHTML=plan();
+document.getElementById('f-west').innerHTML=west();
+document.getElementById('f-north').innerHTML=north();
+</script>
